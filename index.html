@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trip Vibe Matcher</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#E8E2D9;--muted:#9A9089;--faint:#6B6560;--line:rgba(255,255,255,.1);
+  --warm:#131210;--card:#1E1C19;--card2:#252320;
+  --acc:#4CAF7D;--acc-l:rgba(76,175,125,.12);
+  --r:14px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--warm);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased}
+.serif{font-family:'Cormorant Garamond',Georgia,serif}
+
+/* BG LAYER */
+.bg-layer{position:fixed;inset:0;z-index:0;background-size:cover;background-position:center;transition:background-image 1s ease;pointer-events:none}
+.bg-layer::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.55)}
+
+/* PAGES */
+.pg{display:none;position:relative;z-index:1;min-height:100vh}
+.pg.on{display:flex;flex-direction:column}
+
+/* ── STARS ── */
+.stars{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.st{position:absolute;background:#fff;border-radius:50%;animation:twk ease-in-out infinite}
+@keyframes twk{0%,100%{opacity:.15}50%{opacity:.9}}
+@keyframes rise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+
+/* ──────────────────────────────
+   PAGE 0 — NAME
+────────────────────────────── */
+#pg-name{align-items:center;justify-content:center;padding:2rem 1.25rem}
+.name-box{width:100%;max-width:440px;text-align:center;animation:rise .8s ease both}
+.logo-orb{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 1.75rem;backdrop-filter:blur(6px)}
+.name-box h1{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,7vw,54px);font-weight:300;color:#fff;line-height:1.15;margin-bottom:.75rem}
+.name-box h1 em{font-style:italic;color:#A8D5B5}
+.name-box p{font-size:14px;color:rgba(255,255,255,.55);line-height:1.75;margin-bottom:2.5rem}
+.name-field{width:100%;padding:15px 20px;font-size:16px;font-family:'Plus Jakarta Sans',sans-serif;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:12px;color:#fff;outline:none;transition:all .2s;margin-bottom:.9rem;backdrop-filter:blur(6px)}
+.name-field::placeholder{color:rgba(255,255,255,.35)}
+.name-field:focus{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.5)}
+.name-cta{width:100%;padding:15px;font-size:15px;font-weight:600;color:#0d1f1a;background:#A8D5B5;border:none;border-radius:12px;cursor:pointer;transition:all .2s;letter-spacing:.01em}
+.name-cta:hover{background:#8bc9a1;transform:translateY(-1px)}
+
+/* ──────────────────────────────
+   PAGE 1 — SEGMENT
+────────────────────────────── */
+#pg-seg{align-items:center;justify-content:center;padding:2rem 1rem}
+.seg-content{width:100%;max-width:860px;animation:rise .6s ease both}
+/* BIG NAME DISPLAY */
+.big-welcome{text-align:center;margin-bottom:2.5rem}
+.big-welcome .welcome-line{font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:.5rem}
+.big-welcome .big-name{font-family:'Cormorant Garamond',serif;font-size:clamp(42px,8vw,72px);font-weight:300;color:#fff;line-height:1.1}
+.big-welcome .big-name em{font-style:italic;color:#A8D5B5}
+.big-welcome .seg-prompt{font-size:15px;color:rgba(255,255,255,.5);margin-top:.6rem}
+.seg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:600px){.seg-grid{grid-template-columns:repeat(2,1fr)}}
+.seg-tile{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:1.25rem 1rem;cursor:pointer;transition:all .2s;text-align:left;backdrop-filter:blur(8px)}
+.seg-tile:hover{transform:translateY(-3px);background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.3)}
+.t-emoji{font-size:28px;display:block;margin-bottom:.6rem;animation:float 3s ease-in-out infinite}
+.seg-tile:nth-child(2) .t-emoji{animation-delay:.5s}
+.seg-tile:nth-child(3) .t-emoji{animation-delay:1s}
+.seg-tile:nth-child(4) .t-emoji{animation-delay:1.5s}
+.seg-tile:nth-child(5) .t-emoji{animation-delay:2s}
+.seg-tile:nth-child(6) .t-emoji{animation-delay:2.5s}
+.t-name{font-size:14px;font-weight:600;color:#fff;margin-bottom:3px}
+.t-range{font-size:11px;font-weight:600;padding:2px 9px;border-radius:999px;display:inline-block;margin-bottom:.4rem}
+.t-desc{font-size:11px;color:rgba(255,255,255,.45);line-height:1.5}
+.bp .t-range{background:rgba(232,83,26,.2);color:#ff8c5a}
+.ct .t-range{background:rgba(13,115,119,.2);color:#5ecdd1}
+.lx .t-range{background:rgba(138,60,98,.2);color:#e09fc0}
+.av .t-range{background:rgba(26,107,60,.2);color:#6bcf90}
+.cp .t-range{background:rgba(180,40,100,.2);color:#f07dba}
+.fm .t-range{background:rgba(200,140,20,.2);color:#ffd166}
+
+/* ──────────────────────────────
+   PAGE 2 — INPUT
+────────────────────────────── */
+#pg-input{background:transparent}
+.input-layout{display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
+@media(max-width:800px){.input-layout{grid-template-columns:1fr}}
+.input-visual{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:2.5rem;background:linear-gradient(to top,rgba(0,0,0,.7) 0%,rgba(0,0,0,.1) 100%)}
+@media(max-width:800px){.input-visual{display:none}}
+.iv-name{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,3vw,40px);font-weight:300;color:#fff;margin-bottom:.4rem}
+.iv-name em{font-style:italic;color:#A8D5B5}
+.iv-sub{font-size:13px;color:rgba(255,255,255,.45);line-height:1.7;margin-bottom:1.25rem}
+.iv-pills{display:flex;flex-wrap:wrap;gap:6px}
+.iv-pill{font-size:11px;padding:4px 12px;border-radius:999px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.6)}
+.input-panel{overflow-y:auto;padding:2rem 2rem 4rem;background:#18161380;backdrop-filter:blur(16px)}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;gap:8px;flex-wrap:wrap}
+.brand{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#6B6560;display:flex;align-items:center;gap:6px}
+.bdot{width:6px;height:6px;border-radius:50%;background:var(--acc)}
+.top-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.user-badge{font-size:13px;font-weight:600;padding:6px 14px;border-radius:999px;background:rgba(76,175,125,.12);color:var(--acc);border:1.5px solid rgba(76,175,125,.25)}
+.change-btn{font-size:11px;font-weight:600;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.07);color:#8A8278;border:none;cursor:pointer;transition:all .15s}
+.change-btn:hover{background:var(--acc);color:#0d1f1a}
+.sec{margin-bottom:1.75rem}
+.sec-label{display:block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5A5450;margin-bottom:.55rem}
+.vibe-ta{width:100%;min-height:88px;padding:.9rem 1.1rem;font-size:15px;font-family:'Cormorant Garamond',serif;font-style:italic;color:#D5CEC6;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;resize:none;outline:none;line-height:1.8;transition:border-color .2s}
+.vibe-ta:focus{border-color:var(--acc)}
+.vibe-ta::placeholder{color:rgba(255,255,255,.25)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:.5rem}
+.chip{font-size:12px;padding:5px 12px;border-radius:999px;background:transparent;border:1px solid rgba(255,255,255,.1);color:#6B6560;cursor:pointer;transition:all .15s}
+.chip:hover{background:var(--acc);color:#0d1f1a;border-color:var(--acc)}
+/* Scope */
+.scope-row{display:flex;gap:6px}
+.sc-btn{flex:1;padding:8px 4px;font-size:12px;font-weight:500;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;color:#8A8278;cursor:pointer;transition:all .15s;text-align:center}
+.sc-btn.on{background:var(--acc);color:#0d1f1a;border-color:var(--acc);font-weight:600}
+/* Tags */
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:12px;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);color:#8A8278;cursor:pointer;transition:all .15s;user-select:none}
+.tag.on{background:rgba(76,175,125,.15);border-color:var(--acc);color:var(--acc);font-weight:500}
+/* Budget range */
+.budget-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+@media(max-width:480px){.budget-grid{grid-template-columns:repeat(2,1fr)}}
+.bud-btn{padding:.65rem .5rem;font-size:11px;font-weight:500;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;cursor:pointer;text-align:center;transition:all .15s;color:#8A8278}
+.bud-btn .br-amount{font-size:13px;font-weight:700;color:#D5CEC6;display:block;margin-bottom:1px}
+.bud-btn .br-label{font-size:10px;color:#6B6560}
+.bud-btn.on{background:rgba(76,175,125,.15);border-color:var(--acc);color:var(--acc)}
+.bud-btn.on .br-amount{color:var(--acc)}
+/* Hotel */
+.hotel-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+@media(max-width:480px){.hotel-grid{grid-template-columns:repeat(2,1fr)}}
+.hb{padding:.55rem .4rem;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;text-align:center;cursor:pointer;transition:all .15s}
+.hb .hs{font-size:10px;display:block;margin-bottom:2px;color:#6B6560}
+.hb .hn{font-size:11px;font-weight:500;color:#8A8278;line-height:1.3}
+.hb.on{background:rgba(76,175,125,.15);border-color:var(--acc)}
+.hb.on .hn{color:var(--acc)}
+/* Filters */
+.filter-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:480px){.filter-grid{grid-template-columns:repeat(2,1fr)}}
+.fg label{display:block;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:5px}
+.fg select{width:100%;padding:9px 26px 9px 10px;font-size:13px;color:var(--ink);background:var(--card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23A09890' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center;border:1.5px solid var(--line);border-radius:9px;outline:none;-webkit-appearance:none;appearance:none;transition:border-color .2s}
+.fg select:focus{border-color:var(--acc)}
+/* Group stepper */
+.gbox{display:inline-flex;align-items:center;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;overflow:hidden}
+.gb{width:38px;height:38px;border:none;background:transparent;font-size:20px;color:#6B6560;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.gb:hover{background:rgba(76,175,125,.12);color:var(--acc)}
+.gv{min-width:72px;text-align:center;font-size:13px;font-weight:600}
+/* CTA */
+.cta-btn{width:100%;padding:16px;font-size:15px;font-weight:600;color:#0d1f1a;background:var(--acc);border:none;border-radius:12px;cursor:pointer;transition:all .2s;margin-top:.5rem}
+.cta-btn:hover{background:#3d9e6c;transform:translateY(-1px)}
+.err{font-size:13px;color:#9B2C2C;background:#FFF5F5;border:1px solid #FED7D7;border-radius:8px;padding:.75rem 1rem;margin-top:.75rem;display:none}
+
+/* ──────────────────────────────
+   PAGE 3 — LOADING
+────────────────────────────── */
+#pg-load{align-items:center;justify-content:center;overflow:hidden}
+.horizon{position:absolute;bottom:0;width:100%;height:32vh;pointer-events:none}
+.h1{position:absolute;bottom:0;width:100%;height:100%;background:#0a1f14;clip-path:polygon(0 100%,0 55%,8% 28%,16% 48%,24% 18%,32% 42%,40% 10%,48% 36%,56% 6%,64% 32%,72% 12%,80% 38%,88% 20%,96% 42%,100% 28%,100% 100%)}
+.h2{position:absolute;bottom:0;width:100%;height:65%;background:#112a1e;clip-path:polygon(0 100%,0 65%,12% 38%,22% 58%,32% 33%,42% 53%,52% 26%,62% 46%,72% 30%,82% 50%,92% 34%,100% 52%,100% 100%)}
+.grass{position:absolute;bottom:0;width:100%;height:30px;background:linear-gradient(180deg,#1e5c32,#0f3820)}
+.load-c{position:relative;z-index:2;text-align:center;padding:2rem;max-width:380px}
+.load-ring{width:52px;height:52px;border:1.5px solid rgba(255,255,255,.15);border-top:1.5px solid #A8D5B5;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1.75rem}
+.load-for{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:.4rem}
+.load-p{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:#fff;margin-bottom:.4rem;min-height:34px}
+.load-s{font-size:13px;color:rgba(255,255,255,.4)}
+.load-dots{display:flex;gap:7px;justify-content:center;margin-top:1.5rem}
+.ld{width:5px;height:5px;background:rgba(255,255,255,.3);border-radius:50%;animation:pulse 1.4s ease-in-out infinite}
+.ld:nth-child(2){animation-delay:.2s}.ld:nth-child(3){animation-delay:.4s}
+
+/* ──────────────────────────────
+   PAGE 4 — RESULTS
+────────────────────────────── */
+#pg-results{background:rgba(15,14,12,.88)}
+.res-layout{max-width:940px;margin:0 auto;padding:2rem 1.5rem 5rem}
+.res-topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:1.5rem;flex-wrap:wrap}
+.back-btn{background:none;border:none;font-size:13px;color:#6B6560;cursor:pointer;padding:0;display:flex;align-items:center;gap:4px;transition:color .15s}
+.back-btn:hover{color:#E8E2D9}
+.res-actions{display:flex;gap:7px;flex-wrap:wrap}
+.ra{font-size:12px;padding:7px 16px;border-radius:999px;border:1.5px solid rgba(255,255,255,.12);background:transparent;color:#8A8278;cursor:pointer;transition:all .15s}
+.ra:hover{border-color:rgba(255,255,255,.3);color:#E8E2D9}
+.ra.prim{background:#4CAF7D;color:#0d1f1a;border-color:#4CAF7D;font-weight:600}
+.ra.prim:hover{background:#3d9e6c}
+.res-intro{margin-bottom:2.25rem}
+.res-greet{font-family:'Cormorant Garamond',serif;font-size:clamp(22px,3.5vw,32px);font-weight:300;color:#E8E2D9;line-height:1.3;margin-bottom:.5rem}
+.res-greet em{font-style:italic;color:#4CAF7D}
+.vibe-box{display:inline-block;background:rgba(181,96,26,.12);border:1px solid rgba(181,96,26,.3);border-radius:8px;padding:.5rem 1rem;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:#D4905A;margin-bottom:.6rem}
+.meta-row{display:flex;flex-wrap:wrap;gap:6px}
+.mc{font-size:11px;font-weight:500;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.07);color:#8A8278}
+/* Destination cards */
+.dest-list{display:flex;flex-direction:column;gap:3rem}
+.dcard{background:#1a1917;border:1px solid rgba(255,255,255,.08);border-radius:22px;overflow:hidden;opacity:0;transform:translateY(24px);transition:opacity .5s ease,transform .5s ease;box-shadow:0 4px 32px rgba(0,0,0,.4)}
+.dcard.in{opacity:1;transform:translateY(0)}
+/* Hero */
+.dc-hero{height:300px;position:relative;overflow:hidden}
+@media(max-width:640px){.dc-hero{height:220px}}
+.dc-hero-bg{width:100%;height:100%;background-size:cover;background-position:center;transition:transform 8s ease;background-color:#1a3829}
+.dcard:hover .dc-hero-bg{transform:scale(1.04)}
+.dc-hero-grad{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.05),rgba(0,0,0,.65))}
+.dc-hero-text{position:absolute;bottom:0;left:0;right:0;padding:1.5rem 2rem}
+@media(max-width:480px){.dc-hero-text{padding:1.25rem}}
+.rank-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:4px}
+.dc-name{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,5vw,42px);font-weight:400;color:#fff;line-height:1.1}
+.dc-region{font-size:12px;color:rgba(255,255,255,.65);margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.flag-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.2);color:#fff}
+.match-float{position:absolute;top:1.25rem;right:1.25rem;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-radius:14px;padding:.7rem 1rem;text-align:center}
+.mf-pct{font-size:22px;font-weight:700;line-height:1}
+.mf-word{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-top:2px}
+.mf-bar-bg{width:54px;height:2.5px;background:#e0e0e0;border-radius:99px;margin-top:5px;overflow:hidden}
+.mf-bar{height:100%;border-radius:99px;width:0;transition:width 1.2s ease .5s}
+/* Body */
+.dc-body{padding:1.75rem 2rem 1.25rem}
+@media(max-width:480px){.dc-body{padding:1.25rem}}
+.dc-tagline{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B5601A;margin-bottom:.6rem}
+.dc-why{font-size:15px;color:#C8C0B5;line-height:1.85;margin-bottom:.9rem}
+.dc-detail{font-size:13px;color:#8A8278;line-height:1.75;margin-bottom:1.1rem}
+.exp-wrap{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:1rem}
+.exp-tag{font-size:12px;padding:5px 13px;background:#141312;border-radius:999px;color:#9A9089;font-weight:500;border:1px solid rgba(255,255,255,.08)}
+.dc-vibe{font-size:12px;color:var(--faint);font-style:italic}
+/* Section header */
+.sec-head{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#6B6560;margin-bottom:1rem;padding:1.25rem 2rem 0;border-top:1px solid rgba(255,255,255,.06)}
+@media(max-width:480px){.sec-head{padding:1rem 1.25rem 0}}
+/* Overview table */
+.ov-table-wrap{padding:0 2rem 1.25rem;overflow-x:auto}
+@media(max-width:480px){.ov-table-wrap{padding:0 1.25rem 1rem}}
+.ov-table{width:100%;border-collapse:collapse;font-size:13px}
+.ov-table th{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6B6560;padding:.5rem .75rem;text-align:left;border-bottom:1.5px solid rgba(255,255,255,.07);white-space:nowrap}
+.ov-table td{padding:.65rem .75rem;border-bottom:.5px solid rgba(255,255,255,.06);vertical-align:top;line-height:1.55}
+.ov-table tr:last-child td{border-bottom:none}
+.ov-table .day-cell{font-size:11px;font-weight:700;color:var(--acc);white-space:nowrap}
+.ov-table .loc-cell{font-weight:500;color:#D5CEC6}
+.ov-table .act-cell{color:#8A8278}
+/* Itinerary grid */
+.itin-grid-wrap{padding:0 2rem 1.25rem}
+@media(max-width:480px){.itin-grid-wrap{padding:0 1.25rem 1rem}}
+.itin-tools{display:flex;gap:8px;margin-bottom:.9rem;flex-wrap:wrap}
+.itin-tb{font-size:11px;font-weight:600;padding:5px 14px;border-radius:999px;border:1.5px solid rgba(255,255,255,.1);background:transparent;color:#6B6560;cursor:pointer;transition:all .15s}
+.itin-tb:hover,.itin-tb.on{background:rgba(76,175,125,.12);border-color:var(--acc);color:var(--acc)}
+.itin-days-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:640px){.itin-days-grid{grid-template-columns:1fr}}
+.idc{background:#141312;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.07)}
+.idc-img{height:120px;background-size:cover;background-position:center;background-color:#ddd;position:relative}
+.idc-img-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,.45))}
+.idc-day-lbl{position:absolute;bottom:8px;left:12px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff}
+.idc-body{padding:.85rem 1rem}
+.idc-slot{margin-bottom:.55rem}
+.idc-slot:last-of-type{margin-bottom:0}
+.idc-time{font-size:9px;font-weight:700;color:#B5601A;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.idc-act{font-size:12px;color:#8A8278;line-height:1.5;outline:none;width:100%;border-radius:4px}
+.idc-act[contenteditable=true]{background:rgba(44,95,74,.07);border:1px dashed rgba(44,95,74,.3);padding:2px 5px;border-radius:4px}
+.add-slot-btn{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--faint);background:none;border:none;padding:4px 0;margin-top:.4rem;cursor:pointer;transition:color .15s}
+.add-slot-btn:hover{color:var(--acc)}
+.day-note{width:100%;font-size:11px;padding:.4rem .65rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:7px;color:#6B6560;resize:none;outline:none;margin-top:.5rem;font-family:inherit;min-height:30px}
+.day-note:focus{border-color:var(--acc)}
+/* Stay options */
+.stay-wrap{padding:0 2rem 1.25rem}
+@media(max-width:480px){.stay-wrap{padding:0 1.25rem 1rem}}
+.stay-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:540px){.stay-grid{grid-template-columns:1fr 1fr}}
+.stay-card{background:#141312;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:.9rem 1rem}
+.stay-icon{font-size:20px;margin-bottom:.4rem}
+.stay-type{font-size:12px;font-weight:600;color:#D5CEC6;margin-bottom:2px}
+.stay-ex{font-size:11px;color:var(--muted);margin-bottom:4px}
+.stay-price{font-size:12px;font-weight:700;color:var(--acc)}
+.stay-note{font-size:10px;color:var(--faint);margin-top:2px;font-style:italic}
+.stay-best{display:inline-block;font-size:9px;font-weight:700;padding:1px 7px;border-radius:999px;background:rgba(181,96,26,.1);color:#B5601A;letter-spacing:.04em;margin-bottom:4px}
+/* Budget */
+.bud-wrap{padding:0 2rem 1.5rem;border-top:1px solid rgba(255,255,255,.07)}
+@media(max-width:480px){.bud-wrap{padding:0 1.25rem 1.25rem}}
+.bud-cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:.75rem}
+@media(max-width:540px){.bud-cards-grid{grid-template-columns:repeat(2,1fr)}}
+.bdc{background:#141312;border-radius:10px;padding:.7rem .75rem;border:1px solid rgba(255,255,255,.06)}
+.bdc-icon{font-size:15px;margin-bottom:3px}
+.bdc-label{font-size:10px;color:#6B6560;margin-bottom:2px}
+.bdc-val{font-size:13px;font-weight:600;color:#D5CEC6}
+.bdc-note{font-size:10px;color:var(--faint);margin-top:1px;line-height:1.4}
+.bud-total{display:flex;align-items:center;justify-content:space-between;background:rgba(76,175,125,.08);border:1px solid rgba(76,175,125,.2);border-radius:10px;padding:.8rem 1rem;margin-top:.5rem}
+.bt-lbl{font-size:12px;font-weight:600;color:#D5CEC6}
+.bt-val{font-size:17px;font-weight:700;color:var(--acc)}
+.bud-note{font-size:11px;color:var(--faint);margin-top:.5rem;font-style:italic}
+/* Bottom */
+.res-bottom{text-align:center;margin-top:3.5rem;padding-top:2rem;border-top:1px solid rgba(255,255,255,.06)}
+.res-bottom p{font-size:14px;color:#6B6560;margin-bottom:1rem}
+
+@media print{.res-topbar,.res-bottom{display:none}.dcard{break-inside:avoid}}
+</style>
+</head>
+<body>
+
+<!-- BACKGROUND LAYER -->
+<div class="bg-layer" id="bg-layer"></div>
+
+<!-- ── PAGE 0: NAME ── -->
+<div id="pg-name" class="pg on">
+  <div class="stars" id="stars-name"></div>
+  <div class="name-box">
+    <div class="logo-orb">🧭</div>
+    <h1 class="serif">Plan a trip that<br>feels like <em>you</em></h1>
+    <p>Not another itinerary generator. A travel companion that reads your emotional state and finds the place that answers it.</p>
+    <input class="name-field" id="name-in" type="text" placeholder="What's your name?" maxlength="40" autocomplete="given-name">
+    <button class="name-cta" onclick="submitName()">Start my journey →</button>
+  </div>
+</div>
+
+<!-- ── PAGE 1: SEGMENT ── -->
+<div id="pg-seg" class="pg">
+  <div class="stars" id="stars-seg"></div>
+  <div class="seg-content">
+    <div class="big-welcome">
+      <div class="welcome-line">Welcome</div>
+      <div class="big-name serif" id="big-name">Traveller <em>✦</em></div>
+      <div class="seg-prompt">What kind of trip are you planning today?</div>
+    </div>
+    <div class="seg-grid">
+      <div class="seg-tile bp" onclick="pickSeg('backpacker','Budget Backpacker','#E8531A',1)">
+        <span class="t-emoji">🎒</span><div class="t-name">Budget Backpacker</div>
+        <div class="t-range">₹8k–₹25k / trip</div>
+        <div class="t-desc">Hostels, local food, shared rides. Best places found by walking, not booking ahead.</div>
+      </div>
+      <div class="seg-tile ct" onclick="pickSeg('comfort','Comfort Traveler','#0D7377',1)">
+        <span class="t-emoji">🏨</span><div class="t-name">Comfort Traveler</div>
+        <div class="t-range">₹30k–₹70k / trip</div>
+        <div class="t-desc">Good hotels, private cabs, curated experiences. Comfortable without excess.</div>
+      </div>
+      <div class="seg-tile lx" onclick="pickSeg('luxury','Luxury Explorer','#8B3A62',1)">
+        <span class="t-emoji">👑</span><div class="t-name">Luxury Explorer</div>
+        <div class="t-range">₹1L–₹3L / trip</div>
+        <div class="t-desc">Boutique resorts, private guides, flight upgrades. Extraordinary, not just comfortable.</div>
+      </div>
+      <div class="seg-tile av" onclick="pickSeg('adventure','Adventure Seeker','#1A6B3C',1)">
+        <span class="t-emoji">⛺</span><div class="t-name">Adventure Seeker</div>
+        <div class="t-range">₹20k–₹50k / trip</div>
+        <div class="t-desc">Camping, trekking, raw and physical. The harder to reach, the better.</div>
+      </div>
+      <div class="seg-tile cp" onclick="pickSeg('couple','Couple Getaway','#B4285A',2)">
+        <span class="t-emoji">💕</span><div class="t-name">Couple Getaway</div>
+        <div class="t-range">₹40k–₹1L / trip</div>
+        <div class="t-desc">Romantic sunsets, intimate dinners, scenic drives. Two people, one perfect trip.</div>
+      </div>
+      <div class="seg-tile fm" onclick="pickSeg('family','Family Adventure','#C88C14',4)">
+        <span class="t-emoji">👨‍👩‍👧‍👦</span><div class="t-name">Family Adventure</div>
+        <div class="t-range">₹50k–₹1.5L / trip</div>
+        <div class="t-desc">Kid-friendly, safe routes, comfortable stays. Memories for everyone.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── PAGE 2: INPUT ── -->
+<div id="pg-input" class="pg">
+  <div class="input-layout">
+    <div class="input-visual">
+      <div class="iv-name serif" id="iv-name">Let's find your <em>place</em></div>
+      <p class="iv-sub">Describe what you want to feel, not where you want to go. Your interests and budget guide everything.</p>
+      <div class="iv-pills">
+        <span class="iv-pill">40+ destinations</span>
+        <span class="iv-pill">India + International</span>
+        <span class="iv-pill">Real budget breakdowns</span>
+        <span class="iv-pill">Personalised for you</span>
+      </div>
+    </div>
+    <div class="input-panel">
+      <div class="top-bar">
+        <div class="brand"><div class="bdot"></div>Trip Vibe Matcher</div>
+        <div class="top-right">
+          <div class="user-badge" id="user-badge">Hi!</div>
+          <button class="change-btn" id="seg-badge-btn" onclick="showPg('pg-seg')">Change type</button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <label class="sec-label">Your vibe right now</label>
+        <textarea class="vibe-ta" id="vi" placeholder="e.g. I want to feel small inside a landscape — mist, majestic waterfalls, green and silence..."></textarea>
+        <div class="chips">
+          <button class="chip" onclick="sv('I want to feel small inside a landscape — mist, majestic waterfalls, green and silence with texture')">Small in a landscape</button>
+          <button class="chip" onclick="sv('I need chaos, colour, street food and things I have never seen before')">Chaos and colour</button>
+          <button class="chip" onclick="sv('I want to slow down — beaches, backwaters, warm water and no decisions')">Beaches and slow</button>
+          <button class="chip" onclick="sv('I need raw wilderness, waterfalls, remoteness and zero crowds')">Wilderness and waterfalls</button>
+          <button class="chip" onclick="sv('I want mountains, cold clean air and monastery mornings')">Mountains and stillness</button>
+          <button class="chip" onclick="sv('I want ancient ruins, desert landscapes and regal history')">Desert and heritage</button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <label class="sec-label">Destination scope</label>
+        <div class="scope-row">
+          <button class="sc-btn on" data-s="both" onclick="setScope(this)">🌍 Both</button>
+          <button class="sc-btn" data-s="domestic" onclick="setScope(this)">🇮🇳 India only</button>
+          <button class="sc-btn" data-s="international" onclick="setScope(this)">✈️ International</button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <label class="sec-label">Interests <span style="font-weight:400;text-transform:none;font-size:10px;color:var(--faint)">(directly shapes your results)</span></label>
+        <div class="tags">
+          <span class="tag" data-cat="beach" onclick="tgl(this)">🏖️ Beaches</span>
+          <span class="tag" data-cat="mountain" onclick="tgl(this)">🏔️ Mountains</span>
+          <span class="tag" data-cat="mountain" onclick="tgl(this)">🥾 Trekking</span>
+          <span class="tag" data-cat="nature" onclick="tgl(this)">🌊 Waterfalls</span>
+          <span class="tag" data-cat="wildlife" onclick="tgl(this)">🦁 Wildlife & Safari</span>
+          <span class="tag" data-cat="culture" onclick="tgl(this)">🛕 Temples & Ruins</span>
+          <span class="tag" data-cat="culture" onclick="tgl(this)">🏰 History & Heritage</span>
+          <span class="tag" data-cat="desert" onclick="tgl(this)">🏜️ Desert landscapes</span>
+          <span class="tag" data-cat="city" onclick="tgl(this)">🎭 City & Nightlife</span>
+          <span class="tag" data-cat="city" onclick="tgl(this)">🍜 Street food & Dining</span>
+          <span class="tag" data-cat="beach" onclick="tgl(this)">🐬 Snorkelling & Diving</span>
+          <span class="tag" data-cat="nature" onclick="tgl(this)">🌿 Forests & Jungles</span>
+          <span class="tag" data-cat="mountain" onclick="tgl(this)">❄️ Snow experiences</span>
+          <span class="tag" data-cat="city" onclick="tgl(this)">🛍️ Markets & Shopping</span>
+          <span class="tag" data-cat="culture" onclick="tgl(this)">🎪 Festivals & Art</span>
+        </div>
+      </div>
+
+      <div class="sec">
+        <label class="sec-label">Your budget for this trip</label>
+        <div class="budget-grid">
+          <button class="bud-btn" data-bmin="0" data-bmax="15000" onclick="pickBudget(this)"><span class="br-amount">Under ₹15k</span><span class="br-label">Budget / Backpacker</span></button>
+          <button class="bud-btn" data-bmin="15000" data-bmax="35000" onclick="pickBudget(this)"><span class="br-amount">₹15k–₹35k</span><span class="br-label">Economy</span></button>
+          <button class="bud-btn on" data-bmin="35000" data-bmax="70000" onclick="pickBudget(this)"><span class="br-amount">₹35k–₹70k</span><span class="br-label">Comfort</span></button>
+          <button class="bud-btn" data-bmin="70000" data-bmax="150000" onclick="pickBudget(this)"><span class="br-amount">₹70k–₹1.5L</span><span class="br-label">Premium</span></button>
+          <button class="bud-btn" data-bmin="150000" data-bmax="300000" onclick="pickBudget(this)"><span class="br-amount">₹1.5L–₹3L</span><span class="br-label">Luxury</span></button>
+          <button class="bud-btn" data-bmin="300000" data-bmax="9999999" onclick="pickBudget(this)"><span class="br-amount">₹3L+</span><span class="br-label">Ultra luxury</span></button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <label class="sec-label">Hotel / Accommodation preference</label>
+        <div class="hotel-grid">
+          <button class="hb" data-h="hostel" data-hr="500,1200" onclick="pickHotel(this)"><span class="hs">🏕️</span><span class="hn">Hostel/Camp</span></button>
+          <button class="hb" data-h="guesthouse" data-hr="1000,2500" onclick="pickHotel(this)"><span class="hs">🏡</span><span class="hn">Guesthouse</span></button>
+          <button class="hb on" data-h="3star" data-hr="2800,6000" onclick="pickHotel(this)"><span class="hs">⭐⭐⭐</span><span class="hn">3-Star Hotel</span></button>
+          <button class="hb" data-h="4star" data-hr="5500,12000" onclick="pickHotel(this)"><span class="hs">⭐⭐⭐⭐</span><span class="hn">4-Star Hotel</span></button>
+          <button class="hb" data-h="5star" data-hr="13000,32000" onclick="pickHotel(this)"><span class="hs">⭐⭐⭐⭐⭐</span><span class="hn">5-Star Hotel</span></button>
+          <button class="hb" data-h="boutique" data-hr="7000,20000" onclick="pickHotel(this)"><span class="hs">🏛️</span><span class="hn">Boutique/Heritage</span></button>
+          <button class="hb" data-h="resort" data-hr="9000,28000" onclick="pickHotel(this)"><span class="hs">🏖️</span><span class="hn">Resort/Villa</span></button>
+          <button class="hb" data-h="unique" data-hr="4500,14000" onclick="pickHotel(this)"><span class="hs">⛵</span><span class="hn">Unique Stay</span></button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="filter-grid">
+          <div class="fg"><label>Duration</label>
+            <select id="c-d"><option value="3">2–3 days</option><option value="5">4–5 days</option><option value="7" selected>5–7 days</option><option value="9">8–10 days</option><option value="11">10+ days</option></select>
+          </div>
+          <div class="fg"><label>Season</label>
+            <select id="c-s"><option value="Oct–Feb (winter)">Oct–Feb (Winter)</option><option value="Mar–May (summer)" selected>Mar–May (Summer)</option><option value="Jun–Sep (monsoon)">Jun–Sep (Monsoon)</option></select>
+          </div>
+          <div class="fg"><label>Transport</label>
+            <select id="c-t"><option value="flights">Flights ✈</option><option value="trains" selected>Trains 🚂</option><option value="road trip">Road trip 🚗</option><option value="mixed">Mixed</option></select>
+          </div>
+          <div class="fg"><label>Mobility level</label>
+            <select id="c-m"><option value="easy">Easy 🚶</option><option value="moderate" selected>Moderate 🥾</option><option value="challenging">Challenging 🧗</option></select>
+          </div>
+          <div class="fg"><label>First visit?</label>
+            <select id="c-ft"><option value="first time">First time 🌟</option><option value="been before">Been before</option></select>
+          </div>
+          <div class="fg"><label>Passport/Visa</label>
+            <select id="c-v"><option value="Indian passport" selected>Indian passport</option><option value="visa on arrival OK">Visa on arrival OK</option><option value="any">Any destination</option></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <label class="sec-label">Group size</label>
+        <div class="gbox">
+          <button class="gb" onclick="chgG(-1)">−</button>
+          <div class="gv" id="gv">1 person</div>
+          <button class="gb" onclick="chgG(1)">+</button>
+        </div>
+      </div>
+
+      <button class="cta-btn" onclick="go()">Find my vibe match →</button>
+      <div class="err" id="err"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── PAGE 3: LOADING ── -->
+<div id="pg-load" class="pg">
+  <div class="stars" id="stars-load"></div>
+  <div class="horizon"><div class="h1"></div><div class="h2"></div><div class="grass"></div></div>
+  <div class="load-c">
+    <div class="load-ring"></div>
+    <div class="load-for" id="load-for"></div>
+    <div class="load-p serif" id="lp">Reading your vibe...</div>
+    <div class="load-s">Matching mood to destinations worldwide</div>
+    <div class="load-dots"><div class="ld"></div><div class="ld"></div><div class="ld"></div></div>
+  </div>
+</div>
+
+<!-- ── PAGE 4: RESULTS ── -->
+<div id="pg-results" class="pg">
+  <div class="res-layout">
+    <div class="res-topbar">
+      <button class="back-btn" onclick="showPg('pg-input')">← New search</button>
+      <div class="res-actions">
+        <button class="ra" onclick="showPg('pg-seg')">Change traveller type</button>
+        <button class="ra prim" onclick="showPg('pg-input')">🔄 Search again</button>
+        <button class="ra" onclick="window.print()">🖨 Print</button>
+      </div>
+    </div>
+    <div class="res-intro">
+      <div class="res-greet serif" id="res-greet">Here are your matches</div>
+      <div class="vibe-box" id="res-vibe"></div>
+      <div class="meta-row" id="res-meta"></div>
+    </div>
+    <div class="dest-list" id="dest-list"></div>
+    <div class="res-bottom">
+      <p>Not quite right? Try a different vibe or adjust your interests.</p>
+      <button class="ra prim" onclick="showPg('pg-input')" style="padding:12px 28px;font-size:14px">🔄 Search again</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_KEY=''; // Paste Anthropic API key for live AI
+
+// ── STATE ──
+let userName='',segId='comfort',segName='Comfort Traveler',segColor='#0D7377';
+let groupSize=1,destScope='both',hotelId='3star',hotelRate=[2800,6000];
+let budgetMin=35000,budgetMax=70000;
+const origItins={};
+
+// ── BACKGROUND IMAGES PER CATEGORY ──
+const BG_IMGS={
+  name:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80',
+  seg:'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600&q=80',
+  input:'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=1600&q=80',
+  beach:'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1600&q=80',
+  mountain:'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1600&q=80',
+  nature:'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1600&q=80',
+  desert:'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=1600&q=80',
+  city:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=80',
+  culture:'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=1600&q=80',
+  wildlife:'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=1600&q=80',
+};
+function setBg(key){
+  const url=BG_IMGS[key]||BG_IMGS.input;
+  document.getElementById('bg-layer').style.backgroundImage=`url('${url}')`;
+}
+
+// ── DESTINATION DB ──
+const POOLS={
+beach:[
+  {name:"Andaman Islands",region:"India",dom:true,cat:"beach",
+   tg:"Untouched coral, emerald water, zero crowds",
+   why:"Your craving for pristine beaches and marine life finds its purest answer in the Andamans — waters so clear you can see the seabed from 10 metres above, coral reefs the colour of a fever dream, and a pace of life dictated entirely by tides.",
+   detail:"The Andamans remain one of India's least commercialised island destinations. Havelock Island's Radhanagar Beach has been consistently rated among Asia's best, and the diving here rivals Southeast Asian options at a fraction of the cost. Permit requirements keep crowds manageable.",
+   exp:["Radhanagar Beach — Asia's top-rated beach","Scuba diving at Havelock's Elephant Beach reef","Glass-bottom boat over living coral","Cellular Jail — India's colonial history"],
+   itin:{day1:{m:"Arrive Port Blair, visit Cellular Jail",a:"Ferry to Havelock Island (2.5 hrs)",e:"First sunset walk on Radhanagar Beach alone",img1:"andaman port blair india"},
+         day2:{m:"Snorkelling at Elephant Beach — coral gardens at 4–8m",a:"Scuba supervised dive or PADI certification",e:"Fresh catch seafood at a beachside shack",img2:"havelock island snorkelling andaman"},
+         day3:{m:"Neil Island ferry — Natural Bridge and Laxmanpur Beach",a:"Last swim at Radhanagar at golden hour",e:"Back to Port Blair, flight home with sand in your shoes",img3:"neil island beach andaman"}},
+   vibe:"pristine, warm, unhurried",img:"andaman island radhanagar beach india",
+   stays:[{icon:"🏖️",type:"Beach Resort",ex:"Symphony Palms Havelock",price:"₹7,000–₹14,000/night",note:"Sea-facing cottages, pool",best:true},{icon:"🏡",type:"Beach Homestay",ex:"Local fisher family stay",price:"₹1,200–₹2,500/night",note:"Authentic, meals included",best:false},{icon:"🏨",type:"Budget Guesthouse",ex:"TSG Blue Resort",price:"₹2,500–₹5,000/night",note:"Clean, near Radhanagar",best:false}]},
+  {name:"Gokarna",region:"Karnataka, India",dom:true,cat:"beach",
+   tg:"The beach Goa forgot to ruin",
+   why:"Gokarna's Om Beach answers your need for slow beach time without DJ sets and infinity pools — small enough to walk everywhere, quiet enough to hear the waves, and a Shiva temple just up the hill adding texture most beach towns completely lack.",
+   detail:"Gokarna is positioned as a serious alternative to Goa for travellers wanting unspoilt coast. The town has an active pilgrimage tradition that coexists peacefully with beach tourism, and the Half Moon Beach trek through coastal cliffs is genuinely beautiful.",
+   exp:["Om Beach — pure slow time","Half Moon Beach trek through sea cliffs","Mahabaleshwar temple town walk at dusk","Sunrise swim before the world arrives"],
+   itin:{day1:{m:"Arrive, find a beach shack, make no plans whatsoever",a:"Swim, read, sleep on the sand",e:"Temple walk through old Gokarna town",img1:"om beach gokarna karnataka"},
+         day2:{m:"Trek to Half Moon Beach via coastal cliff path (45 min)",a:"Stay there the entire afternoon",e:"Dine at a beach shack as the fishing boats come in",img2:"half moon beach gokarna trek"},
+         day3:{m:"Final dawn swim alone before anyone else wakes",a:"Mahabaleshwar Shiva temple blessing",e:"Bus or train out — mind finally quiet",img3:"gokarna temple sunset karnataka"}},
+   vibe:"unhurried, simple, restorative",img:"gokarna beach karnataka india",
+   stays:[{icon:"🌴",type:"Beach Shack Stay",ex:"Namaste Cafe Om Beach",price:"₹800–₹2,000/night",note:"Right on the beach, basic and perfect",best:true},{icon:"🏡",type:"Heritage Guesthouse",ex:"Swaswara Retreat",price:"₹12,000–₹22,000/night",note:"Luxury yoga retreat",best:false},{icon:"🏨",type:"Mid-range Hotel",ex:"Hotel Gokarna International",price:"₹2,000–₹4,500/night",note:"Town centre, good base",best:false}]},
+  {name:"Maldives",region:"Indian Ocean",dom:false,cat:"beach",
+   tg:"Where the ocean is the entire destination",
+   why:"The Maldives exist to answer one question: what if the water itself was the destination and the land was just somewhere to sleep? Every overwater villa positions the horizon as your complete field of vision. There are genuinely no decisions to make here.",
+   detail:"Each Maldivian atoll is its own world — different reef systems, different marine life concentrations, different price points. South Malé Atoll offers the best value overwater stays with house reef snorkelling, while Baa Atoll is the place for manta ray congregation.",
+   exp:["Overwater villa sunrise — pure Indian Ocean horizon","Snorkelling with manta rays and nurse sharks","Bioluminescent beach walk at midnight","Sunset dolphin cruise"],
+   itin:{day1:{m:"Fly into Malé, seaplane or speedboat transfer",a:"Settle in, first overwater swim at 28°C",e:"Overwater deck dinner under uncountable stars",img1:"maldives overwater bungalow ocean"},
+         day2:{m:"Dawn snorkelling on house reef — manta rays",a:"Nothing. Genuinely nothing. This is the plan.",e:"Bioluminescent beach walk at 10pm",img2:"maldives snorkelling coral reef"},
+         day3:{m:"Whale shark snorkelling at first light",a:"Final overwater lunch with ocean view",e:"Seaplane back to Malé, flight home",img3:"maldives whale shark snorkelling"}},
+   vibe:"oceanic, still, maximally slow",img:"maldives overwater villa turquoise ocean",
+   stays:[{icon:"🌊",type:"Overwater Villa",ex:"Cocoon Maldives",price:"₹35,000–₹80,000/night",note:"Direct lagoon access from your room",best:true},{icon:"🏝️",type:"Beach Villa",ex:"Kandima Maldives",price:"₹22,000–₹45,000/night",note:"Beachfront with garden",best:false},{icon:"🤿",type:"Dive Resort",ex:"Meeru Island Resort",price:"₹15,000–₹30,000/night",note:"Excellent dive centre",best:false}]},
+  {name:"Bali",region:"Indonesia",dom:false,cat:"beach",
+   tg:"Beaches, temples and tropical magic combined",
+   why:"Bali refuses to be only a beach destination — Uluwatu cliff temples at sunset, rice terraces at dawn, and surf towns with actual personality all exist within one island. Your desire for beaches with genuine cultural depth is answered perfectly here.",
+   detail:"The southern coast (Seminyak, Canggu, Uluwatu) offers Bali's best beach experiences. Uluwatu's cliff-top temple and surf breaks are genuinely dramatic. Combining a few beach days with the cultural triangle of Ubud makes for a complete trip.",
+   exp:["Uluwatu cliff temple at sunset over the Indian Ocean","Seminyak and Canggu surf beaches","Tegalalang rice terraces at 6am","Nusa Dua clear water snorkelling"],
+   itin:{day1:{m:"Arrive, head straight to Seminyak beach",a:"Sunset at Potato Head beach club",e:"Dinner in Seminyak's lantern-lit restaurant streets",img1:"seminyak beach bali sunset"},
+         day2:{m:"Tegalalang rice terraces before 8am — golden light",a:"Drive south through Ubud",e:"Uluwatu cliff temple Kecak dance at sunset",img2:"uluwatu temple bali sunset cliff"},
+         day3:{m:"Nusa Dua snorkelling in crystal water",a:"Tanah Lot ocean temple at low tide",e:"Final cocktail watching the Indian Ocean",img3:"nusa dua beach bali snorkelling"}},
+   vibe:"tropical, beautiful, layered",img:"bali beach temple indonesia ocean",
+   stays:[{icon:"🏡",type:"Private Villa",ex:"Uma Kalai Villa Seminyak",price:"₹12,000–₹28,000/night",note:"Private pool, tropical garden",best:true},{icon:"🏨",type:"Boutique Hotel",ex:"Alaya Resort Ubud",price:"₹8,000–₹18,000/night",note:"Rice terrace views",best:false},{icon:"🌴",type:"Beach Hotel",ex:"The Legian Bali",price:"₹20,000–₹40,000/night",note:"Direct beachfront",best:false}]},
+  {name:"Lakshadweep",region:"India",dom:true,cat:"beach",
+   tg:"India's best-kept coral paradise",
+   why:"Lakshadweep is what happens when pristine lagoons meet zero tourist infrastructure — the water is an impossible turquoise, the coral is intact, and the silence is so complete you can hear fish. Getting here takes permits and effort. It is completely worth it.",
+   detail:"Only a handful of atolls are open to tourists, and permits are required. Agatti and Bangaram see the most visitors while remaining uncrowded. The snorkelling is genuinely world-class — visibility can exceed 20 metres. No alcohol on most islands.",
+   exp:["Agatti lagoon — translucent water over sand","Kayaking over intact coral beds","Bangaram island — completely undeveloped","Night sky with zero light pollution anywhere"],
+   itin:{day1:{m:"Fly into Agatti, first sight of the lagoon stops you cold",a:"Snorkelling on the house reef",e:"Beach dinner with impossible stars above",img1:"lakshadweep lagoon coral india"},
+         day2:{m:"Kayak over coral beds at dawn — water clarity is surreal",a:"Bangaram island day trip",e:"Bonfire on the beach, fisher stories",img2:"bangaram island lakshadweep snorkelling"},
+         day3:{m:"Final lagoon swim in complete silence",a:"Visit the local fishing village",e:"Fly back to Kochi or Mumbai",img3:"lakshadweep beach india lagoon"}},
+   vibe:"remote, pristine, undiscovered",img:"lakshadweep lagoon beach india",
+   stays:[{icon:"🏝️",type:"Island Resort",ex:"Bangaram Island Resort",price:"₹18,000–₹35,000/night",note:"Only resort on Bangaram, all-inclusive",best:true},{icon:"🏡",type:"Tourist Hut",ex:"SPORTS Beach Resort Agatti",price:"₹4,000–₹9,000/night",note:"Government-run, basic, lagoon-side",best:false},{icon:"🤿",type:"Dive Stay",ex:"Agatti Lagoon Beach Resort",price:"₹6,000–₹14,000/night",note:"Dive packages available",best:false}]},
+  {name:"Phi Phi Islands",region:"Thailand",dom:false,cat:"beach",
+   tg:"Limestone karsts rising from turquoise water",
+   why:"Phi Phi is the beach destination that earned its legend — vertical limestone karsts rising straight from the sea, Maya Bay's impossibly clear water, and snorkelling reefs where the fish are so dense they crowd out the view. The kind of beach that exists outside normal reality.",
+   detail:"Phi Phi Don has accommodation; Phi Phi Leh (Maya Bay) is day-trip only. Best reached by ferry from Krabi (1.5hrs) or Phuket (2hrs). October–April is ideal. Maya Bay now has controlled visitor numbers to protect the reef.",
+   exp:["Maya Bay — the most photographed bay in Southeast Asia","Snorkelling at Shark Point and Anemone Reef","Sunrise kayak through the karst sea caves","Viewpoint hike — both islands visible at once"],
+   itin:{day1:{m:"Ferry from Krabi or Phuket, arrive Phi Phi Don",a:"Settle in, first snorkel on Long Beach reef",e:"Sunset at the viewpoint, then beach bar",img1:"phi phi island thailand maya bay karst"},
+         day2:{m:"Early boat to Maya Bay before the crowds arrive",a:"Snorkelling circuit — Shark Point, coral gardens",e:"Longtail boat to a private beach at dusk",img2:"maya bay phi phi thailand snorkelling turquoise"},
+         day3:{m:"Sunrise kayak through the sea caves",a:"Last swim and beach time",e:"Ferry back, flight from Krabi or Phuket",img3:"phi phi viewpoint thailand karst ocean"}},
+   vibe:"tropical, dramatic, crystalline",img:"phi phi island thailand karst turquoise water",
+   stays:[{icon:"🏖️",type:"Beach Bungalow",ex:"Zeavola Resort Phi Phi",price:"₹12,000–₹25,000/night",note:"Luxury among the jungle and beach",best:true},{icon:"🏡",type:"Budget Bungalow",ex:"Phi Phi The Beach Resort",price:"₹2,500–₹6,000/night",note:"Right on Loh Bagao Bay",best:false},{icon:"🏨",type:"Mid-range Hotel",ex:"Holiday Inn Resort Phi Phi",price:"₹7,000–₹15,000/night",note:"Pool, great snorkelling access",best:false}]},
+  {name:"Phuket",region:"Thailand",dom:false,cat:"beach",
+   tg:"Thailand's beach capital with soul",
+   why:"Phuket delivers the full-service beach experience — white sand beaches, clear warm water, outstanding Thai food everywhere you look, and enough variety to fill 10 days without running out. Patong for nightlife, Kata for surf, Nai Harn for quiet. You choose your version.",
+   detail:"Phuket has an international airport with direct flights from most Indian metros. The island is large — use Grab or scooters to move between beaches. The Andaman Sea is best November–April. The Old Phuket Town has genuinely excellent food and Art Deco architecture.",
+   exp:["Patong, Kata and Nai Harn beaches","Phang Nga Bay sea kayaking","Big Buddha viewpoint at sunset","Old Phuket Town food crawl"],
+   itin:{day1:{m:"Arrive, settle in at your beach of choice",a:"First Andaman swim — warm, clear, perfect",e:"Old Phuket Town food street dinner",img1:"phuket beach thailand andaman sea"},
+         day2:{m:"Phang Nga Bay day trip — James Bond Island and sea caves",a:"Kayak through mangrove and karst sea caves",e:"Seafood dinner by the water",img2:"phang nga bay thailand sea kayak karst"},
+         day3:{m:"Big Buddha at sunrise — all of Phuket visible",a:"Kata or Nai Harn for a final quiet beach day",e:"Night market before the flight home",img3:"big buddha phuket thailand sunset"}},
+   vibe:"warm, vibrant, complete",img:"phuket thailand beach sunset andaman",
+   stays:[{icon:"🏖️",type:"Beach Resort",ex:"Trisara Phuket",price:"₹30,000–₹65,000/night",note:"Ultra-luxury, private beach",best:false},{icon:"🏨",type:"Boutique Hotel",ex:"The Shore at Katathani",price:"₹12,000–₹25,000/night",note:"Kata Noi beach, sea-facing villas",best:true},{icon:"🏡",type:"Guesthouse",ex:"Old Town Guesthouse",price:"₹2,000–₹5,000/night",note:"Heritage building, near food",best:false}]},
+],
+mountain:[
+  {name:"Ladakh",region:"Jammu & Kashmir, India",dom:true,cat:"mountain",
+   tg:"Where earth and sky become indistinguishable",
+   why:"Ladakh resets everything — a high-altitude desert at 3,500m where Buddhist monasteries cling to crumbling cliffs, the air is too thin for noise, and Pangong Lake changes colour every hour. You will feel humbled in a way only vast landscapes can manage.",
+   detail:"Ladakh is best visited between June and September when the Manali–Leh and Srinagar–Leh roads are open. Acclimatisation is essential — spend the first day doing nothing. The Nubra Valley via Khardung La (one of the world's highest motorable passes) adds a completely different desert dimension.",
+   exp:["Pangong Lake — blue shifting to turquoise to navy","Thiksey Monastery at 6am morning prayers","Nubra Valley sand dunes at 10,000 feet","Magnetic Hill and the Indus–Zanskar confluence"],
+   itin:{day1:{m:"Arrive Leh by flight, complete rest — altitude demands it",a:"Shanti Stupa walk at sunset, entire valley below",e:"Thukpa dinner, sleep by 9pm at altitude",img1:"leh ladakh shanti stupa india"},
+         day2:{m:"Thiksey Monastery at dawn prayer",a:"Drive to Pangong Lake through Chang La Pass (5h)",e:"Camp at Pangong as the colours change",img2:"pangong lake ladakh himalaya"},
+         day3:{m:"Pangong dawn — colours you cannot photograph accurately",a:"Drive back via Nubra Valley sand dunes",e:"Leh market, flight home carrying altitude memories",img3:"nubra valley ladakh camels"}},
+   vibe:"elemental, vast, altitude-humbled",img:"ladakh pangong lake himalaya india",
+   stays:[{icon:"⛺",type:"Camp by Pangong Lake",ex:"The Starlit Camp Pangong",price:"₹3,500–₹7,000/night",note:"Wake up to the lake changing colour",best:true},{icon:"🏡",type:"Ladakhi Homestay",ex:"Local family homestay, Leh",price:"₹1,000–₹2,500/night",note:"Home-cooked thukpa and real hospitality",best:false},{icon:"🏨",type:"Heritage Hotel",ex:"The Grand Dragon Ladakh",price:"₹7,000–₹15,000/night",note:"Mountain views, good altitude base",best:false}]},
+  {name:"Sikkim",region:"Northeast India",dom:true,cat:"mountain",
+   tg:"Monasteries, mist and Kanchenjunga",
+   why:"Sikkim's answer to cold clean mountain air is its most complete — Buddhist monasteries at 10,000 feet, Kanchenjunga watching from a distance so vast it seems like another dimension of sky, and roads that haven't been overrun yet.",
+   detail:"East Sikkim (Gangtok, Tsomgo) is accessible and developed. West Sikkim (Pelling, Yuksom) offers the best Kanchenjunga views and trekking access. The Goecha La trek is one of India's finest. Permits required for most areas.",
+   exp:["Rumtek Monastery at dawn prayers","Tsomgo Lake at 12,400ft — frozen in winter","Kanchenjunga sunrise from Pelling viewpoint","Temi tea estate walk at golden hour"],
+   itin:{day1:{m:"Arrive Gangtok, acclimatise with a MG Marg walk",a:"Rumtek Monastery — the largest in Sikkim",e:"Thukpa dinner with valley lights below",img1:"sikkim gangtok monastery india"},
+         day2:{m:"Drive to Tsomgo Lake through rhododendron forests",a:"Sit at the frozen lake — silence has actual mass",e:"Back to Gangtok, early night",img2:"tsomgo lake sikkim himalaya"},
+         day3:{m:"Drive to Pelling — Kanchenjunga sunrise at Tiger Hill",a:"Rabdentse ruins and Pemayangtse Monastery",e:"Drive out, lungs full of the cleanest air",img3:"kanchenjunga sikkim pelling"}},
+   vibe:"serene, elevated, sacred",img:"sikkim monastery kanchenjunga himalaya",
+   stays:[{icon:"🏡",type:"Mountain Homestay",ex:"Local homestay, Pelling",price:"₹1,500–₹3,000/night",note:"Kanchenjunga view from the breakfast table",best:true},{icon:"🏨",type:"Heritage Hotel",ex:"Mayfair Spa Resort Gangtok",price:"₹7,000–₹16,000/night",note:"Best mountain views in Gangtok",best:false},{icon:"⛺",type:"Eco Lodge",ex:"Yuksom Eco Lodge",price:"₹2,500–₹5,000/night",note:"Trek base, forests all around",best:false}]},
+  {name:"Spiti Valley",region:"Himachal Pradesh, India",dom:true,cat:"mountain",
+   tg:"Sky desert, stone monastery, absolute silence",
+   why:"Spiti at 12,000 feet makes you small in a way green landscapes cannot — a cold desert where monasteries cling to vertical cliffs, the air barely carries sound, and the silence has the quality of something sacred. Stripped back. Extraordinary.",
+   detail:"Spiti is accessible from Shimla (open year-round via a longer route) or from Manali via the Kunzum Pass (open June–September only). The entire circuit takes 7–10 days and should not be rushed. Key, Dhankar, and Tabo monasteries are genuinely ancient.",
+   exp:["Key Monastery — 1,000 years on a cliff face","Chandratal Lake — the moon lake at 4,300m","Langza fossil village at 14,500ft","Pin Valley National Park — snow leopard territory"],
+   itin:{day1:{m:"Arrive Kaza, do nothing — acclimatise and simply look",a:"Key Monastery walk through ancient prayer halls",e:"Dinner under the Milky Way on a rooftop",img1:"key monastery spiti valley india"},
+         day2:{m:"Drive to Langza at dawn — fossils in every rock",a:"Dhankar Monastery and its high-altitude lake",e:"Homestay dinner, four blankets",img2:"chandratal lake spiti himachal"},
+         day3:{m:"Pre-dawn drive to Chandratal Lake",a:"Sit at the lake — this is the transcendent moment",e:"Long, beautiful drive out through Pin Valley",img3:"langza village spiti himalaya"}},
+   vibe:"ancient, elevated, stripped back",img:"spiti valley key monastery himachal india",
+   stays:[{icon:"🏡",type:"Village Homestay",ex:"Local homestay, Kaza or Langza",price:"₹800–₹2,000/night",note:"Meals included, wood-fire warmth",best:true},{icon:"⛺",type:"Camp at Chandratal",ex:"Chandratal Wilderness Camp",price:"₹2,500–₹5,000/night",note:"Lake-side, permit required",best:false},{icon:"🏨",type:"Guesthouse",ex:"Sakya Abode Kaza",price:"₹1,500–₹3,500/night",note:"Best base for day trips",best:false}]},
+  {name:"Meghalaya",region:"Northeast India",dom:true,cat:"mountain",
+   tg:"Where clouds come home to rest above waterfalls",
+   why:"Meghalaya is the landscape that exists to make you feel small in the best way — living root bridges grown over centuries, Nohkalikai Falls plunging 340 metres into a pool of surreal green, and the wettest skies on earth that pour a silence so textured you can almost hold it. Every mist-soaked valley here answers the call for green, waterfalls, and raw natural scale.",
+   detail:"Cherrapunji (Sohra) and Mawsynram compete for the title of world's wettest place. The best time to visit is October–May; monsoon is dramatic but roads can be difficult. The Nongriat root bridge trek (3km, 3,500 steps) is the highlight — done in a day from Tyrna village.",
+   exp:["Double-decker living root bridge at Nongriat","Nohkalikai Falls — India's tallest plunge (340m)","Dawki river — boats float on pure air","Mawlynnong — Asia's cleanest village"],
+   itin:{day1:{m:"Fly Shillong, drive to Cherrapunji through cloud valleys",a:"Nohkalikai Falls — stand at the edge until you feel appropriately small",e:"Khasi thali dinner, sleep to rain on the roof",img1:"nohkalikai falls cherrapunji meghalaya india"},
+         day2:{m:"Trek down to the double-decker living root bridge at Nongriat",a:"Swim in the natural blue pool below the ancient roots",e:"Back to Cherrapunji, watch the evening mist roll in from Bangladesh",img2:"living root bridge nongriat meghalaya india"},
+         day3:{m:"Drive to Dawki — river so clear boats seem to float on air",a:"Kayak on the Umngot river at golden hour",e:"Back to Shillong, Police Bazaar evening walk",img3:"dawki river meghalaya boat india"}},
+   vibe:"misty, vast, waterfall-carved",img:"meghalaya waterfall living root bridge mist india",
+   stays:[{icon:"🌿",type:"Eco Treehouse",ex:"Orchid Lake Resort, Cherrapunji",price:"₹4,000–₹8,000/night",note:"Canopy stay with valley views",best:true},{icon:"🏡",type:"Khasi Homestay",ex:"Local family, Tyrna village",price:"₹600–₹1,500/night",note:"Home-cooked Khasi food",best:false},{icon:"🏨",type:"Heritage Hotel",ex:"Polo Towers, Shillong",price:"₹3,500–₹7,000/night",note:"City base for day trips",best:false}]},
+  {name:"Wayanad",region:"Kerala, India",dom:true,cat:"mountain",
+   tg:"Wild forests and coffee-scented mornings",
+   why:"Wayanad is Kerala's forest secret — dense canopy, tribal villages, wildlife corridors, and waterfalls without the backwater crowds. Soochipara Falls through jungle, Chembra Peak with its heart-shaped lake at the top, and coffee estates where the mist never fully lifts. Your desire for green, wild and quiet finds its rawer answer here.",
+   detail:"Wayanad is best visited October–May. The Chembra Peak trek (3 hours) requires a guide and Forest Department permit. Edakkal Caves hold 6,000-year-old Neolithic petroglyphs — one of South India's most undervisited archaeological sites. Night safaris run from Muthanga Wildlife Sanctuary.",
+   exp:["Chembra Peak — heart-shaped lake at 2,100m","Soochipara Falls through dripping jungle","Night safari for elephant, leopard, deer","Edakkal Caves — 6,000-year-old rock art"],
+   itin:{day1:{m:"Arrive at a treehouse or coffee estate resort",a:"Chembra Peak trek — 3 hours, heart-shaped lake at top",e:"Treehouse deck as the forest goes quiet after dark",img1:"chembra peak wayanad kerala india"},
+         day2:{m:"Soochipara Falls trek through dense rainforest",a:"Tribal village visit with a local guide",e:"Bonfire dinner at the estate",img2:"soochipara falls wayanad kerala jungle"},
+         day3:{m:"Edakkal Caves — ancient petroglyphs in the rock",a:"Coffee plantation tour, taste just-picked beans",e:"Drive to Calicut for the flight home",img3:"wayanad coffee plantation kerala forest"}},
+   vibe:"wild, verdant, layered",img:"wayanad forest waterfall kerala india",
+   stays:[{icon:"🌳",type:"Treehouse Resort",ex:"Vythiri Resort Wayanad",price:"₹6,000–₹14,000/night",note:"Tree canopy stay, waterfalls nearby",best:true},{icon:"🏡",type:"Coffee Estate Stay",ex:"Pepper County Estate",price:"₹3,500–₹7,000/night",note:"Plantation walks at dawn",best:false},{icon:"⛺",type:"Eco Camp",ex:"Jungle Camp Wayanad",price:"₹2,000–₹4,500/night",note:"Wildlife sounds at night",best:false}]},
+  {name:"Coorg",region:"Karnataka, India",dom:true,cat:"mountain",
+   tg:"Coffee, silence, mist and forest floor",
+   why:"Coorg delivers the specific texture of quiet you are looking for — green so dense it softens sound, mist curling through pepper vines at dawn, Abbey Falls through a rainforest that smells of wet earth and roasted coffee. The kind of place that makes you slow down without trying.",
+   detail:"Coorg (Kodagu) is 5 hours from Bangalore or 4 hours from Mangalore. Best visited October–March. Abbey Falls is a 1km walk through forest. Raja's Seat viewpoint is most magical at dawn. The Nagarhole National Park is 1.5 hours away for wildlife.",
+   exp:["Abbey Falls trek through dripping rainforest","Coffee estate walk at sunrise","Raja's Seat — valley fills with mist at dawn","Nagarhole Wildlife Reserve"],
+   itin:{day1:{m:"Arrive coffee estate homestay, settle into forest air",a:"Abbey Falls trek — forest smells of rain and earth",e:"Veranda evening with local wine, total quiet"},
+         day2:{m:"Pre-dawn estate walk as coffee is processed by hand",a:"Talacauvery — source of the Cauvery river",e:"Coorgi pork curry dinner by firelight"},
+         day3:{m:"Raja's Seat — watch the valley fill with mist at dawn",a:"Omkareshwara temple and Madikeri fort",e:"Slow drive out through the Western Ghats"},
+         day1:{m:"Arrive coffee estate homestay, settle into forest air",a:"Abbey Falls trek — forest smells of rain and earth",e:"Veranda evening with local wine, total quiet",img1:"abbey falls coorg karnataka india"},
+         day2:{m:"Pre-dawn estate walk, watch coffee processed by hand",a:"Talacauvery — source of the Cauvery river",e:"Coorgi pork curry dinner by firelight",img2:"coorg coffee estate misty karnataka"},
+         day3:{m:"Raja's Seat — valley fills with mist at dawn",a:"Omkareshwara temple and Madikeri fort",e:"Slow drive out through the Western Ghats",img3:"raja seat coorg valley mist karnataka"}},
+   vibe:"quiet, green, unhurried",img:"coorg coffee estate misty forest karnataka india",
+   stays:[{icon:"🏡",type:"Coffee Estate Homestay",ex:"Misty Woods, Coorg",price:"₹4,500–₹9,000/night",note:"Wake up in a plantation, meals included",best:true},{icon:"🏨",type:"Heritage Hotel",ex:"Orange County Resort",price:"₹12,000–₹24,000/night",note:"Luxury amid the coffee",best:false},{icon:"🌿",type:"Eco Lodge",ex:"Rainforest Retreat",price:"₹5,000–₹10,000/night",note:"Deep forest, yoga, silence",best:false}]},
+  {name:"Tawang",region:"Arunachal Pradesh, India",dom:true,cat:"mountain",
+   tg:"The monastery at the edge of the world",
+   why:"Tawang at 10,000 feet near Tibet holds the second-largest Buddhist monastery in the world — a place so remote and majestic that reaching it feels genuinely earned. The cold clean mountain air here is in its most concentrated form, and the landscape at Sela Pass will stop you completely.",
+   detail:"Tawang requires an Inner Line Permit (ILP) for non-Arunachalis, obtainable at Tezpur or Guwahati. The road from Guwahati takes 12–14 hours; most travellers fly to Tezpur first. Best visited March–October. Sela Pass (13,700ft) sometimes snows even in summer.",
+   exp:["Tawang Monastery at first light","Sela Pass at 13,700ft with snow","Madhuri Lake — mirror still at altitude","Bumla Pass near the Tibetan border"],
+   itin:{day1:{m:"Arrive Tawang after the long mountain road",a:"Tawang Monastery — walk the ancient halls alone",e:"Evening prayers — sit at the back and absorb",img1:"tawang monastery arunachal pradesh india"},
+         day2:{m:"Sela Pass drive through snow-covered heights",a:"Jaswant Garh memorial and Nuranang Falls",e:"Warm thukpa dinner back in town",img2:"sela pass tawang arunachal india snow"},
+         day3:{m:"Madhuri Lake at dawn — still water reflecting the sky",a:"PT Tso Lake and the border viewpoint",e:"Begin the long beautiful drive back down",img3:"madhuri lake tawang arunachal india altitude"}},
+   vibe:"remote, sacred, boundary-dissolving",img:"tawang monastery arunachal india mountain",
+   stays:[{icon:"🏡",type:"Heritage Guesthouse",ex:"Hotel Tawang Residency",price:"₹1,500–₹3,500/night",note:"Best location, monastery views",best:true},{icon:"🏡",type:"Local Homestay",ex:"Monpa family homestay",price:"₹800–₹2,000/night",note:"Authentic mountain hospitality",best:false},{icon:"🏨",type:"Mid-range Hotel",ex:"Hotel Pemaling",price:"₹2,500–₹5,500/night",note:"Comfortable, reliable",best:false}]},
+  {name:"Pokhara",region:"Nepal",dom:false,cat:"mountain",
+   tg:"The Annapurna's living room",
+   why:"Pokhara is where the Himalayas come down to meet a lake — Machapuchare reflected in Phewa at dawn, paragliding above snow peaks, and a mountain town with genuine soul. The cold clean air you are looking for arrives here with your first breath off the plane, and stays with you the whole trip.",
+   detail:"Pokhara is a 45-min flight or 7-hour drive from Kathmandu. The Sarangkot sunrise viewpoint gives the finest Annapurna panorama accessible without trekking. Paragliding over Phewa Lake is world-class. The Pokhara-Annapurna Base Camp trek starts here (5–9 days).",
+   exp:["Sarangkot — Annapurna sunrise panorama","Phewa Lake dawn rowing","Paragliding over the lake and peaks","Begnas Lake — quieter, local, beautiful"],
+   itin:{day1:{m:"Arrive Pokhara, walk to Lakeside for the first lake view",a:"Phewa Lake boat ride to Tal Barahi Temple",e:"Restaurant row lakeside — mountains framed at dinner",img1:"pokhara nepal phewa lake annapurna"},
+         day2:{m:"4am drive to Sarangkot — Annapurna sunrise unfolds before you",a:"Paragliding over the lake and the white peaks",e:"Davis Falls and Gupteshwor Cave by sunset",img2:"sarangkot sunrise annapurna nepal paragliding"},
+         day3:{m:"Final Phewa Lake row at golden hour",a:"World Peace Pagoda — city below, peaks behind",e:"Bus or flight to Kathmandu",img3:"world peace pagoda pokhara nepal lake"}},
+   vibe:"serene, elevated, Himalayan",img:"pokhara nepal annapurna lake mountain",
+   stays:[{icon:"🏔️",type:"Lake-View Hotel",ex:"Temple Tree Resort Pokhara",price:"₹4,000–₹9,000/night",note:"Phewa lakeside, Annapurna views",best:true},{icon:"🏡",type:"Mountain Guesthouse",ex:"Fishtail Lodge",price:"₹7,000–₹16,000/night",note:"Island lodge on the lake",best:false},{icon:"🏡",type:"Budget Guesthouse",ex:"Middle Path Hotel",price:"₹800–₹2,000/night",note:"Lakeside, clean, friendly",best:false}]},
+  {name:"Bhutan",region:"Kingdom of Bhutan",dom:false,cat:"mountain",
+   tg:"The last kingdom that measured progress in happiness",
+   why:"Bhutan is a nature reserve that is also a country — the air smells of pine and incense, monasteries outnumber tourists, and every landscape seems untouched because, by law, it is. Tiger's Nest perched on a 3,000m cliff is one of the most dramatic sights on earth.",
+   detail:"Bhutan requires a minimum daily spend of USD 200 (high season) which includes accommodation, food, guide and transport. Paro is the only international airport; fly via Kolkata, Delhi, or Bangkok. Best visited March–May and September–November.",
+   exp:["Tiger's Nest Monastery perched on a 3,000m cliff","Punakha Dzong at the river confluence","Dochula Pass with 108 chortens","Haa Valley — off tourist radar completely"],
+   itin:{day1:{m:"Arrive Paro, acclimatise at a riverside farmhouse",a:"Rinpung Dzong — fortress monastery by the river",e:"Traditional Ema Datshi dinner with local farmers",img1:"bhutan tigers nest monastery cliff"},
+         day2:{m:"Trek to Tiger's Nest — 4 hours, unforgettable at every step",a:"Sit above the clouds at the monastery cafe",e:"Drive to Thimphu, evening market walk",img2:"bhutan paro valley monastery landscape"},
+         day3:{m:"Buddha Dordenma — 52m golden statue above the valley",a:"Punakha Dzong — the most beautiful dzong in Bhutan",e:"Fly out carrying something indefinable with you",img3:"punakha dzong bhutan river monastery"}},
+   vibe:"sacred, pristine, time-shifted",img:"bhutan monastery mountain landscape valley",
+   stays:[{icon:"🏡",type:"Luxury Farmhouse",ex:"Uma by COMO Paro",price:"₹25,000–₹50,000/night",note:"Hillside with valley views",best:true},{icon:"🏨",type:"Boutique Hotel",ex:"Zhiwa Ling Heritage Hotel",price:"₹18,000–₹35,000/night",note:"Traditional Bhutanese architecture",best:false},{icon:"🏡",type:"Eco Lodge",ex:"Gangtey Lodge",price:"₹30,000–₹60,000/night",note:"Phobjikha Valley, crane migration",best:false}]},
+  {name:"Dolomites",region:"Italy",dom:false,cat:"mountain",
+   tg:"The most dramatic mountain architecture on earth",
+   why:"The Dolomites are unlike any other mountain range — vertical rose-gold towers that turn blood-orange at sunset, deep green valleys below, and trails that wind through landscapes that look hand-painted. Your search for mountains as spectacle ends here.",
+   detail:"South Tyrol (Alto Adige) is the gateway — Bolzano airport or train from Venice (2.5 hrs). The Tre Cime di Lavaredo circuit is the iconic hike, and cable cars make many viewpoints accessible without extreme fitness. Best June–September.",
+   exp:["Tre Cime di Lavaredo — the iconic three spires","Lago di Braies — turquoise lake at the mountain base","Alta Via 1 — multi-day ridge trail","Sunset on the Enrosadira — peaks turn blood orange"],
+   itin:{day1:{m:"Arrive Bolzano or Cortina, drive through the valleys",a:"First Dolomite view — stop at every viewpoint",e:"Alpine refuge dinner — speck, polenta, local wine",img1:"dolomites italy mountains tre cime"},
+         day2:{m:"Tre Cime di Lavaredo loop — 3 hours, most dramatic hike",a:"Lago di Braies — the famous turquoise lake",e:"Cable car sunset for the Enrosadira pink glow",img2:"lago di braies dolomites italy mountain lake"},
+         day3:{m:"Morning valley drive through Alpe di Siusi meadows",a:"Bolzano old town and Ötzi the Iceman museum",e:"Train or flight home from Bolzano or Venice",img3:"alpe di siusi dolomites italy alpine meadow"}},
+   vibe:"dramatic, golden, vertical",img:"dolomites italy mountains sunset rose gold",
+   stays:[{icon:"🏡",type:"Mountain Refuge (Rifugio)",ex:"Rifugio Auronzo",price:"₹6,000–₹12,000/night",note:"Inside the park, basic but magical",best:true},{icon:"🏨",type:"Alpine Hotel",ex:"Hotel Adler Dolomiti",price:"₹18,000–₹38,000/night",note:"Spa, mountain views, excellent food",best:false},{icon:"🏡",type:"Farmhouse Stay",ex:"Gasserhof Farm, Castelrotto",price:"₹8,000–₹18,000/night",note:"Working farm, meadow views",best:false}]},
+  {name:"Swiss Alps",region:"Switzerland",dom:false,cat:"mountain",
+   tg:"The mountains that invented themselves",
+   why:"The Swiss Alps are the mountain landscape all other mountains try to be — impossibly green valleys, glacier-carved peaks, cable cars rising above the cloud line to viewpoints that make you question whether the world is real. Cold, crystalline, extraordinary.",
+   detail:"The Jungfrau region (Interlaken, Lauterbrunnen, Grindelwald) is the classic base. Lauterbrunnen's valley of 72 waterfalls is genuinely one of the world's great landscapes. The Männlichen ridge walk gives uninterrupted views of the Eiger's north face.",
+   exp:["Jungfraujoch — Top of Europe at 3,454m","Lauterbrunnen — valley of 72 waterfalls","Grindelwald glacier trail","Fondue in a mountain hut above snowline"],
+   itin:{day1:{m:"Arrive Zurich, train through lakes and alps to Lauterbrunnen",a:"Walk to Trümmelbach Falls inside the cliff face",e:"Mountain fondue dinner as the valley goes dark",img1:"lauterbrunnen valley switzerland waterfalls"},
+         day2:{m:"Train to Jungfraujoch — above the clouds, ice world",a:"Männlichen ridge walk — Eiger, Mönch, Jungfrau in one frame",e:"Sunset from the ridge",img2:"jungfraujoch switzerland top of europe"},
+         day3:{m:"Grindelwald glacier trail in the morning",a:"Last cable car for one more impossible view",e:"Train back to Zurich, flight home",img3:"grindelwald glacier switzerland alps"}},
+   vibe:"majestic, crystalline, impossible",img:"swiss alps jungfrau lauterbrunnen switzerland",
+   stays:[{icon:"🏡",type:"Mountain Chalet",ex:"Hotel Staubbach Lauterbrunnen",price:"₹14,000–₹28,000/night",note:"Waterfall views from your window",best:true},{icon:"🏨",type:"Boutique Hotel",ex:"Hotel Belvedere Grindelwald",price:"₹18,000–₹38,000/night",note:"Eiger north face directly in view",best:false},{icon:"⛺",type:"Alpine Hut",ex:"SAC Mountain Hut",price:"₹3,500–₹7,000/night",note:"Above snowline, shared dorms",best:false}]},
+],
+desert:[
+  {name:"Jaisalmer",region:"Rajasthan, India",dom:true,cat:"desert",
+   tg:"The golden city rising from the Thar",
+   why:"Jaisalmer is a sandcastle that became a city — the entire fort still inhabited, camel caravans still crossing the dunes at dusk, and the Sahara wind sculpting the landscape into curves that look painted by a different kind of light.",
+   detail:"Jaisalmer Fort is a UNESCO World Heritage Site and uniquely still inhabited by thousands of people. The Sam Sand Dunes are 45km from the city and offer the classic desert camp experience. October to February is ideal — summers are extreme.",
+   exp:["Sam Sand Dunes sunset camel safari","Jaisalmer Fort — living World Heritage Site","Patwon ki Haveli — seven storeys of stone filigree","Kuldhara ghost village — abandoned in a single night"],
+   itin:{day1:{m:"Arrive, walk into the golden fort at dawn",a:"Patwon ki Haveli and the merchant quarter",e:"Rooftop dinner on fort walls as sun sets on sandstone",img1:"jaisalmer fort rajasthan golden india"},
+         day2:{m:"Early drive to Sam Sand Dunes",a:"Camel safari across the dunes at sunset",e:"Desert camp under the Milky Way, folk music around a fire",img2:"sam sand dunes jaisalmer camel safari"},
+         day3:{m:"Kuldhara ghost village — atmosphere is extraordinary",a:"Gadisar Lake and the haveli facades",e:"Train out, watching the desert go dark",img3:"kuldhara ghost village jaisalmer rajasthan"}},
+   vibe:"golden, ancient, vast",img:"jaisalmer fort desert rajasthan india",
+   stays:[{icon:"⛺",type:"Desert Camp",ex:"Mirvana Nature Resort",price:"₹5,000–₹12,000/night",note:"Swiss tents by the dunes, best stargazing",best:true},{icon:"🏰",type:"Heritage Hotel",ex:"Suryagarh Palace",price:"₹12,000–₹28,000/night",note:"Fort-style luxury, rooftop views",best:false},{icon:"🏡",type:"Haveli Guesthouse",ex:"Hotel Nachana Haveli",price:"₹2,500–₹6,000/night",note:"Inside the fort, heritage rooms",best:false}]},
+  {name:"Ladakh",region:"Jammu & Kashmir, India",dom:true,cat:"desert",
+   tg:"High-altitude desert at the edge of the world",
+   why:"Ladakh is simultaneously a mountain destination and a cold desert — the Nubra Valley's sand dunes at 10,000 feet with Bactrian camels are one of the world's most surreal landscapes, framed by 6,000m peaks.",
+   detail:"The Nubra Valley, accessible via Khardung La pass, offers a genuinely different experience from the rest of Ladakh — fruit orchards, sand dunes, and the Diskit Monastery watching over everything. The combination of desert and Himalayan landscape is unique on earth.",
+   exp:["Nubra Valley sand dunes at altitude","Diskit Monastery — guardian of the valley","Hunder village and Bactrian camel safari","Pangong Lake — the blue changes hourly"],
+   itin:{day1:{m:"Arrive Leh, full rest at altitude",a:"Shanti Stupa walk at sunset",e:"Acclimatisation dinner, early sleep",img1:"leh ladakh buddhist monastery india"},
+         day2:{m:"Drive over Khardung La to Nubra Valley",a:"Sand dunes at Hunder — Bactrian camel ride",e:"Camp in the valley under Himalayan sky",img2:"nubra valley sand dunes ladakh india"},
+         day3:{m:"Diskit Monastery at dawn",a:"Drive back to Leh via the valley road",e:"Local market, flight home",img3:"diskit monastery nubra valley ladakh"}},
+   vibe:"elemental, surreal, high-altitude",img:"nubra valley ladakh desert himalaya india",
+   stays:[{icon:"⛺",type:"Camp in the Dunes",ex:"Sand Dune Camp Hunder",price:"₹3,000–₹6,000/night",note:"Sleep between dunes and mountains",best:true},{icon:"🏡",type:"Village Homestay",ex:"Local homestay, Sumur",price:"₹1,000–₹2,000/night",note:"Orchard views, homemade meals",best:false},{icon:"🏨",type:"Boutique Hotel",ex:"Snow Leopard Lodge",price:"₹6,000–₹14,000/night",note:"Nubra Valley views, comfortable",best:false}]},
+  {name:"Wadi Rum",region:"Jordan",dom:false,cat:"desert",
+   tg:"The desert that made Lawrence of Arabia weep",
+   why:"Wadi Rum is the desert all other deserts aspire to be — rose-red sandstone towers rising from a valley floor so vast and empty that the sky literally doubles in size. Bedouin camps, camel rides, and a silence that fills every thought.",
+   detail:"Wadi Rum is 4 hours from Amman and 1 hour from Aqaba. The protected area covers 720 sq km of desert landscape. Combine with Petra (2 hours away) for one of the world's great dual destinations. Best visited in October–April.",
+   exp:["Lawrence's Spring and carved inscriptions","Jeep safari through canyon and arch landscape","Bedouin camp dinner under 3,000 stars","Sunrise camelback ride across the red dunes"],
+   itin:{day1:{m:"Arrive Aqaba, drive into Wadi Rum",a:"Jeep safari: canyons, Lawrence's Spring, arches",e:"Bedouin camp dinner — lamb mandi under the stars",img1:"wadi rum jordan desert red rock"},
+         day2:{m:"Camel sunrise ride across the red dunes",a:"Rock climbing on the sandstone towers",e:"Second desert night — you will not want to leave",img2:"wadi rum jordan bedouin camp"},
+         day3:{m:"Final sunrise walk in absolute silence",a:"Drive to Petra — the rose-red city",e:"Petra by night — candles illuminate the Siq",img3:"petra jordan rose city at night"}},
+   vibe:"vast, ancient, humbling",img:"wadi rum jordan desert landscape",
+   stays:[{icon:"⛺",type:"Bubble Tent Camp",ex:"Wadi Rum UFO Luxotel",price:"₹18,000–₹35,000/night",note:"Transparent ceiling for stargazing",best:true},{icon:"🏕️",type:"Bedouin Camp",ex:"Wadi Rum Night Luxury Camp",price:"₹8,000–₹18,000/night",note:"Authentic experience, camel included",best:false},{icon:"⛺",type:"Basic Desert Camp",ex:"Mohammed Mutlak Camp",price:"₹3,500–₹7,000/night",note:"True Bedouin hospitality",best:false}]},
+  {name:"Rann of Kutch",region:"Gujarat, India",dom:true,cat:"desert",
+   tg:"The world's largest salt desert, glowing white",
+   why:"The Rann during full moon is one of the most surreal landscapes on the subcontinent — endless white salt flats stretching to the horizon, moonlight reflecting off the ground so it looks like a frozen inland sea. Genuinely unlike anything else.",
+   detail:"The Rann Utsav festival runs October to February, making it an ideal combination of landscape and culture. Dholavira, one of the five largest Harappan cities, is a UNESCO site within reach. The white desert effect is most dramatic at full moon.",
+   exp:["White Rann full moon walk at midnight","Kala Dungar viewpoint — highest point in Kutch","Dholavira Harappan city ruins","Kutchi embroidery village artisans"],
+   itin:{day1:{m:"Arrive Bhuj, drive to the White Rann",a:"First walk on the salt flats — scale is disorienting",e:"Tent resort dinner as sunset turns everything pink",img1:"rann of kutch white desert gujarat india"},
+         day2:{m:"Kala Dungar at dawn — entire desert visible",a:"Dholavira ruins — 5,000 years of history",e:"Full moon walk on the salt flats",img2:"dholavira harappan ruins kutch gujarat"},
+         day3:{m:"Kutchi embroidery village workshop",a:"Rann Utsav craft market",e:"Drive to Bhuj, flight home",img3:"kutch embroidery artisan gujarat india"}},
+   vibe:"surreal, vast, culturally layered",img:"rann of kutch white salt desert gujarat",
+   stays:[{icon:"⛺",type:"Luxury Tent Resort",ex:"Rann Riders Desert Resort",price:"₹8,000–₹16,000/night",note:"White desert walk from your tent",best:true},{icon:"🏡",type:"Heritage Homestay",ex:"Bhuj Homestay",price:"₹1,500–₹3,500/night",note:"Kutchi architecture, family meals",best:false},{icon:"🏨",type:"Heritage Hotel",ex:"Regenta Resort Bhuj",price:"₹4,000–₹9,000/night",note:"Good city base",best:false}]},
+],
+city:[
+  {name:"Old Delhi",region:"Delhi, India",dom:true,cat:"city",
+   tg:"Chaos distilled into pure sensation",
+   why:"Old Delhi is the most honest answer to wanting chaos and colour — Chandni Chowk at noon is a full-body experience of sound, smell and motion that leaves no mental space for anything except the present moment. You won't see it all. That is exactly the point.",
+   detail:"Old Delhi's Walled City is one of the densest urban environments on earth. The contrast with New Delhi's colonial boulevards is extreme. Best experienced on foot or by cycle rickshaw — it cannot be absorbed through a car window. Early morning is magical.",
+   exp:["Chandni Chowk at peak morning hour","Jama Masjid rooftop at sunset","Paranthe Wali Gali eating trail","Khari Baoli spice market"],
+   itin:{day1:{m:"Walk into Chandni Chowk without a map at 8am",a:"Khari Baoli spice market — eyes will water",e:"Jama Masjid at dusk, rooftop dinner overlooking the old city",img1:"chandni chowk old delhi morning india"},
+         day2:{m:"Humayun's Tomb — calm and symmetry after the chaos",a:"Lodi Garden walk, then Khan Market for coffee",e:"Hauz Khas Village live music",img2:"jama masjid delhi sunset india"},
+         day3:{m:"Qutub Minar complex at opening time",a:"Dilli Haat for craft and colour",e:"Flight or train out — head absolutely full",img3:"qutub minar delhi india ancient"}},
+   vibe:"overwhelming, alive, relentless",img:"old delhi chandni chowk bazaar india",
+   stays:[{icon:"🏨",type:"Heritage Hotel",ex:"Maidens Hotel New Delhi",price:"₹7,000–₹16,000/night",note:"Colonial property, near Old Delhi",best:true},{icon:"🏡",type:"Haveli Stay",ex:"Haveli Dharampura, Old Delhi",price:"₹5,000–₹12,000/night",note:"Inside the walled city, rooftop",best:false},{icon:"🏨",type:"Budget Hotel",ex:"Hotel Broadway (1950s classic)",price:"₹2,500–₹5,000/night",note:"Historic, great location",best:false}]},
+  {name:"Bangkok",region:"Thailand",dom:false,cat:"city",
+   tg:"Street food, temples and organised beautiful mayhem",
+   why:"Bangkok is chaos with a system — tuk-tuks weaving between gold-spired temples, night markets selling everything imaginable, and a river city that genuinely never sleeps. The colour and chaos you're looking for in its most distilled international form.",
+   detail:"Bangkok's old town (Rattanakosin Island) holds the Grand Palace, Wat Pho, and Wat Arun within walking distance. The klhong (canal) boat network is the fastest way around. Chatuchak Weekend Market is the world's largest outdoor market and deserves a full half-day.",
+   exp:["Grand Palace and Wat Phra Kaew at first light","Chatuchak Market — 15,000 stalls","Yaowarat Chinatown at midnight","Long-tail speedboat through the khlongs"],
+   itin:{day1:{m:"Grand Palace and Wat Pho before the crowds arrive",a:"Long-tail boat through khlongs, Wat Arun by river",e:"Yaowarat Chinatown — best street food night in Asia",img1:"grand palace bangkok thailand temple"},
+         day2:{m:"Chatuchak Weekend Market — get deliberately lost",a:"Jim Thompson House, rooftop rest",e:"Khao San Road for the full Bangkok chaos experience",img2:"chatuchak market bangkok thailand"},
+         day3:{m:"Or Tor Kor fresh market — the best in Asia",a:"Lumphini Park morning, then MBK for shopping",e:"Last pad see ew, flight home",img3:"yaowarat chinatown bangkok night"}},
+   vibe:"electric, chaotic, delicious",img:"bangkok temple night market thailand",
+   stays:[{icon:"🏨",type:"Luxury Hotel",ex:"Mandarin Oriental Bangkok",price:"₹25,000–₹55,000/night",note:"River views, legendary service",best:false},{icon:"🏨",type:"Boutique Hotel",ex:"137 Pillars Suites Bangkok",price:"₹12,000–₹25,000/night",note:"Silom district, stylish",best:true},{icon:"🏡",type:"Budget Guesthouse",ex:"NapPark Hostel Bangkok",price:"₹800–₹2,000/night",note:"Khao San Road area, clean",best:false}]},
+  {name:"Istanbul",region:"Turkey",dom:false,cat:"city",
+   tg:"Where two continents collide at breakfast",
+   why:"Istanbul is the only city where you can have breakfast in Europe and dinner in Asia on the same day. The Grand Bazaar, the Bosphorus, the call to prayer echoing between minarets — colour and chaos in their most civilised and layered form.",
+   detail:"Istanbul rewards the slow walk. The historic peninsula (Sultanahmet) is dense with UNESCO sites. The Grand Bazaar is the world's oldest continuously operating market. Crossing the Bosphorus to the Asian side (Kadıköy) gives a completely different and more local perspective.",
+   exp:["Grand Bazaar — 4,000 shops, one impossible labyrinth","Hagia Sophia at dawn before any tourists arrive","Bosphorus sunset cruise between two continents","Karaköy fish sandwiches on the waterfront"],
+   itin:{day1:{m:"Hagia Sophia and Blue Mosque at golden morning light",a:"Grand Bazaar — wander without a plan",e:"Galata Bridge fish sandwiches, Karaköy streets",img1:"hagia sophia istanbul turkey morning"},
+         day2:{m:"Topkapi Palace — 400 years of Ottoman empire",a:"Spice Bazaar, then a proper Turkish coffee",e:"Bosphorus cruise — two continents in one glance",img2:"bosphorus istanbul turkey sunset cruise"},
+         day3:{m:"Ferry to Asian side — Kadıköy market and breakfast",a:"Istiklal Avenue and the Galata Tower",e:"Last baklava and tea, flight home",img3:"grand bazaar istanbul turkey spice"}},
+   vibe:"layered, ancient, delicious",img:"istanbul bosphorus mosque turkey",
+   stays:[{icon:"🏨",type:"Design Hotel",ex:"Soho House Istanbul",price:"₹18,000–₹38,000/night",note:"Beyoglu district, Bosphorus views",best:true},{icon:"🏰",type:"Ottoman Palace Hotel",ex:"Ciragan Palace Kempinski",price:"₹35,000–₹80,000/night",note:"On the Bosphorus, historic palace",best:false},{icon:"🏡",type:"Boutique Guesthouse",ex:"Ibrahim Pasha Hotel",price:"₹6,000–₹14,000/night",note:"Opposite Blue Mosque",best:false}]},
+  {name:"Marrakech",region:"Morocco",dom:false,cat:"city",
+   tg:"A medina that swallows you whole",
+   why:"Marrakech's medina is the closest thing to the 14th century — narrow souks selling saffron and leather, Djemaa el-Fna transforming at dusk into 200 food stalls, riad courtyards hiding rose gardens behind crumbling doors. Colour and chaos in their most aromatic form.",
+   detail:"Marrakech is 4 hours by flight from India via a connection. The medina is a UNESCO World Heritage Site. Riads (traditional courtyard houses) are the best accommodation — book directly for best rates. The best food in Morocco is often from hole-in-the-wall stalls, not restaurants.",
+   exp:["Djemaa el-Fna — the square that transforms at dusk","Souks: spice market, leather tannery, lamp makers","Majorelle Garden — Yves Saint Laurent's secret","Hammam ritual at a traditional bathhouse"],
+   itin:{day1:{m:"Check into a riad, immediately get lost in the medina",a:"Leather tannery platform, then spice souk",e:"Djemaa el-Fna at dusk — 200 food stalls appear",img1:"djemaa el fna marrakech morocco night"},
+         day2:{m:"Majorelle Garden before 9am — YSL blue at its purest",a:"Ben Youssef Madrasa — finest Islamic architecture",e:"Traditional cooking class — tagine and pastilla",img2:"marrakech medina souk morocco colorful"},
+         day3:{m:"Bahia Palace, final medina wander with no agenda",a:"Hammam and argan oil treatment",e:"Rooftop mint tea, flight home",img3:"majorelle garden marrakech morocco blue"}},
+   vibe:"aromatic, labyrinthine, electric",img:"marrakech medina morocco souk spice",
+   stays:[{icon:"🏡",type:"Riad (Medina)",ex:"Riad Kniza Marrakech",price:"₹12,000–₹28,000/night",note:"Courtyard pool, rooftop views",best:true},{icon:"🏡",type:"Budget Riad",ex:"Riad Yasmine",price:"₹4,000–₹9,000/night",note:"Small, intimate, central",best:false},{icon:"🏨",type:"Luxury Hotel",ex:"La Mamounia",price:"₹45,000–₹100,000/night",note:"Legendary grand hotel",best:false}]},
+  {name:"Tokyo",region:"Japan",dom:false,cat:"city",
+   tg:"The city that perfected organised beautiful chaos",
+   why:"Tokyo is the answer to wanting a city that has thought through everything — vending machines at every corner, ramen at 3am, cherry blossoms in Shinjuku Gyoen, and a metro system so precise the trains apologise for being 30 seconds late. Chaos run with extraordinary discipline.",
+   detail:"Tokyo has direct flights from most Indian metros (8-10 hrs). The IC card (Suica/Pasmo) handles all transit. Each neighbourhood is essentially its own city — Shinjuku for nightlife, Shibuya for spectacle, Yanaka for old Tokyo, Tsukiji for seafood at dawn.",
+   exp:["Shibuya Crossing at rush hour — 3,000 people per light","Tsukiji outer market at 5am — best breakfast on earth","Shinjuku Gyoen cherry blossoms (March–April)","TeamLab Borderless digital art museum"],
+   itin:{day1:{m:"Arrive, Shibuya Crossing at rush hour — stand in the middle",a:"Harajuku Takeshita Street, Meiji Shrine in the forest",e:"Shinjuku Omoide Yokocho — yakitori alley under the trains",img1:"shibuya crossing tokyo japan night"},
+         day2:{m:"Tsukiji outer market at 5am — tuna sashimi for breakfast",a:"Senso-ji Temple Asakusa, then teamLab art",e:"Roppongi for contemporary art, then Tokyo Tower view",img2:"tsukiji market tokyo japan fresh fish"},
+         day3:{m:"Shinjuku Gyoen for morning calm (cherry blossoms in season)",a:"Akihabara electronics, then Yanaka old town",e:"Izakaya dinner — small plates, cold beer, Tokyo stories",img3:"shinjuku gyoen cherry blossom tokyo japan"}},
+   vibe:"electric, precise, endlessly surprising",img:"tokyo japan night city shibuya neon",
+   stays:[{icon:"🏨",type:"Capsule Hotel (Experience)",ex:"The Millennials Shibuya",price:"₹2,500–₹5,000/night",note:"Modern pods, tech experience",best:false},{icon:"🏨",type:"Boutique Hotel",ex:"Trunk Hotel Shibuya",price:"₹14,000–₹28,000/night",note:"Design, central, rooftop",best:true},{icon:"🏡",type:"Traditional Ryokan",ex:"Sawanoya Ryokan, Yanaka",price:"₹5,000–₹10,000/night",note:"Old Tokyo neighbourhood feel",best:false}]},
+],
+culture:[
+  {name:"Kyoto",region:"Japan",dom:false,cat:"culture",
+   tg:"1,000 temples and one perfect tea ceremony",
+   why:"Kyoto is the answer when you want to feel surrounded by something tended carefully for centuries — bamboo forests swept clean each morning, geiko in Gion at dusk, and a tea ceremony where every single movement has accumulated meaning.",
+   detail:"Kyoto has 1,600 Buddhist temples and 400 Shinto shrines. The most visited (Fushimi Inari, Arashiyama, Kinkakuji) are beautiful at dawn before crowds arrive. The Gion district rewards patient evening walking — geiko sightings are far more likely in the narrow lanes between 6–8pm.",
+   exp:["Arashiyama bamboo grove at 6am","Fushimi Inari — 10,000 torii gates at sunrise","Gion at dusk — geiko almost guaranteed","Philosopher's Path in cherry blossom season"],
+   itin:{day1:{m:"Arashiyama bamboo grove before 7am — go early",a:"Tenryuji temple garden, traditional sake brewery",e:"Gion district at dusk — lantern-lit streets, kimono",img1:"arashiyama bamboo grove kyoto japan morning"},
+         day2:{m:"Fushimi Inari at dawn — hike the full 4km torii tunnel",a:"Nishiki Market — the kitchen of Kyoto",e:"Traditional kaiseki dinner — 12 courses of one season",img2:"fushimi inari torii gates kyoto japan"},
+         day3:{m:"Philosopher's Path walk, Nanzenji aqueduct",a:"Tea ceremony lesson with a master",e:"Last bowl of ramen, Shinkansen to Tokyo",img3:"gion district kyoto japan dusk lantern"}},
+   vibe:"ancient, meticulous, beautiful",img:"kyoto japan fushimi inari temple cherry blossom",
+   stays:[{icon:"🏡",type:"Traditional Ryokan",ex:"Tawaraya Ryokan (most famous)",price:"₹28,000–₹60,000/night",note:"Tatami rooms, kaiseki dinner included",best:true},{icon:"🏨",type:"Design Hotel",ex:"Ace Hotel Kyoto",price:"₹12,000–₹25,000/night",note:"Modern, central Karasuma area",best:false},{icon:"🏡",type:"Machiya (Townhouse)",ex:"Kyoto Machiya via Airbnb",price:"₹8,000–₹20,000/night",note:"Traditional wooden townhouse",best:false}]},
+  {name:"Hampi",region:"Karnataka, India",dom:true,cat:"culture",
+   tg:"Ruins, boulders and river silence",
+   why:"Hampi is the 14th-century capital of an empire scattered across a boulder landscape so alien it seems like another planet. Five hundred year-old temple complexes sit between 10-metre granite boulders. You will slow down here because the history demands it.",
+   detail:"Hampi's ruins span 26 sq km and contain over 1,600 monuments from the Vijayanagara Empire. The combination of surreal geological landscape (the boulder-strewn terrain is genuinely unlike anywhere else in India) with intact temple complexes is extraordinary.",
+   exp:["Virupaksha Temple at dawn prayers","Vittala Temple and the stone chariot at sunrise","Coracle ride on the Tungabhadra River","Sunset from Matanga Hill over the boulder landscape"],
+   itin:{day1:{m:"Arrive, walk to Virupaksha Temple complex at dawn",a:"Explore the ruined bazaar streets on foot",e:"Hemakuta Hill sunset — boulders turn to gold",img1:"virupaksha temple hampi karnataka india"},
+         day2:{m:"Coracle ride across the Tungabhadra",a:"Cycle through the ruins at your own pace",e:"Sit by the river and watch the light change",img2:"vittala temple stone chariot hampi india"},
+         day3:{m:"Vittala Temple at dawn — the stone chariot at first light",a:"Final riverside sit in total silence",e:"Bus or train out, feeling genuinely calm",img3:"hampi ruins boulders tungabhadra karnataka"}},
+   vibe:"ancient, slow, otherworldly",img:"hampi ruins boulders karnataka india",
+   stays:[{icon:"🏡",type:"Heritage Guesthouse",ex:"Mowgli Guest House, Virupapur",price:"₹800–₹2,500/night",note:"Across the river, rice field views",best:true},{icon:"🏨",type:"Boutique Hotel",ex:"Evolve Back Kamala (ultra-luxury)",price:"₹22,000–₹45,000/night",note:"Luxury within the ruins",best:false},{icon:"🏡",type:"Homestay",ex:"Local family homestay, Hampi Bazaar",price:"₹600–₹1,500/night",note:"Waking up to temple bells",best:false}]},
+],
+wildlife:[
+  {name:"Jim Corbett",region:"Uttarakhand, India",dom:true,cat:"wildlife",
+   tg:"The forest where the tiger chooses you",
+   why:"Jim Corbett is India's oldest national park — dense sal forests, the Ramganga river running silver through them, and tiger sightings that feel earned rather than arranged. You will wait. And then you will see something that changes your relationship to wildness.",
+   detail:"Corbett has six wildlife zones; Dhikala (Central) is considered the best for tigers but requires advance booking. February–June offers best wildlife visibility as vegetation thins and animals concentrate around water. The forest sounds at night from your lodge are an experience in themselves.",
+   exp:["Dhikala zone jeep safari — best tiger habitat","Ramganga river bank at dusk","Night forest sounds from the lodge veranda","Elephant safari at dawn through the grass"],
+   itin:{day1:{m:"Arrive Ramnagar, afternoon jeep safari Zone 3",a:"Dhikala zone through sal forest",e:"Wildlife spotting from lodge veranda after dark",img1:"jim corbett national park tiger india"},
+         day2:{m:"Pre-dawn elephant safari in the buffer zone",a:"Ramganga riverside walk with naturalist guide",e:"Night sounds from the forest — leopard calls",img2:"ramganga river corbett national park india"},
+         day3:{m:"Final dawn jeep safari at golden hour",a:"Corbett Museum and naturalist talk",e:"Drive back to Delhi or Kathgodam train",img3:"jeep safari corbett forest india"}},
+   vibe:"patient, wild, primeval",img:"jim corbett national park tiger india",
+   stays:[{icon:"🏡",type:"Forest Lodge",ex:"The Ramsay, Corbett",price:"₹8,000–₹18,000/night",note:"Inside the park boundary, forest sounds",best:true},{icon:"⛺",type:"Eco Camp",ex:"Infiniti Corbett",price:"₹4,000–₹9,000/night",note:"River-side camp, good for birding",best:false},{icon:"🏨",type:"Heritage Hotel",ex:"Jim's Jungle Retreat",price:"₹12,000–₹25,000/night",note:"Colonial feel, safari specialists",best:false}]},
+  {name:"Kaziranga",region:"Assam, India",dom:true,cat:"wildlife",
+   tg:"One-horned rhinos and wild Asia in Assam",
+   why:"Kaziranga holds the world's largest population of Indian one-horned rhinoceros — over 2,700, walking through tall elephant grass alongside wild water buffalo, elephants, and tigers. Utterly unlike any other wildlife experience in India.",
+   detail:"Kaziranga is best visited November–April. The park has four ranges; the Central and Western ranges offer best wildlife density. The pre-dawn elephant safari (only in Kaziranga in India) is extraordinary — the mist, the grass, the rhinos at 20 metres.",
+   exp:["Elephant safari at dawn — rhinos at 20 metres","Jeep safari Central Range","One-horned rhino close encounter","Brahmaputra river sunset from the bank"],
+   itin:{day1:{m:"Arrive Kohora, afternoon jeep safari Central Range",a:"Rhino sightings almost guaranteed in Central",e:"Lodge dinner, naturalist briefing",img1:"kaziranga rhinoceros assam india"},
+         day2:{m:"Pre-dawn elephant safari — misty, extraordinary",a:"Western Range for tigers and buffalo",e:"Brahmaputra river sunset watch",img2:"kaziranga elephant safari assam"},
+         day3:{m:"Burapahar Range — birds and elephant herds",a:"Rhino conservation centre visit",e:"Drive to Guwahati for flight out",img3:"one horned rhino kaziranga assam india"}},
+   vibe:"wild, primeval, unforgettable",img:"kaziranga one horned rhino assam india",
+   stays:[{icon:"🏡",type:"Jungle Lodge",ex:"Iora the Retreat Kaziranga",price:"₹6,000–₹14,000/night",note:"Eco-lodge, park edge, naturalists",best:true},{icon:"⛺",type:"Camp Stay",ex:"Diphlu River Lodge",price:"₹4,500–₹10,000/night",note:"River bank, jungle feel",best:false},{icon:"🏨",type:"Heritage Property",ex:"Wild Grass Resort",price:"₹3,500–₹7,000/night",note:"Original Kaziranga property",best:false}]},
+]
+};
+
+// ── BUDGET FILTERING ──
+const DEST_COSTS={
+  "Andaman Islands":35000,"Gokarna":12000,"Maldives":150000,"Bali":90000,
+  "Lakshadweep":55000,"Ladakh":35000,"Sikkim":28000,"Spiti Valley":22000,
+  "Swiss Alps":200000,"Jaisalmer":22000,"Wadi Rum":140000,"Rann of Kutch":20000,
+  "Old Delhi":18000,"Bangkok":70000,"Istanbul":180000,"Kyoto":220000,
+  "Hampi":16000,"Jim Corbett":30000,"Kaziranga":32000,"Tawang":28000,
+  "Pokhara":50000,"Bhutan":80000,"Hoi An":75000,"Pondicherry":18000,
+  "Coorg":22000,"Varanasi":18000,"Kolkata":18000,"Jodhpur":24000,
+  "Meghalaya":25000,"Wayanad":18000
+};
+const DEST_FLIGHTS={
+  "Andaman Islands":[5000,9000],"Gokarna":[2500,5000],"Maldives":[18000,35000],
+  "Bali":[20000,38000],"Lakshadweep":[6000,14000],"Ladakh":[6000,12000],
+  "Sikkim":[4500,9000],"Spiti Valley":[4000,8000],"Swiss Alps":[60000,110000],
+  "Jaisalmer":[3500,8000],"Wadi Rum":[42000,80000],"Rann of Kutch":[4000,8500],
+  "Old Delhi":[2000,5000],"Bangkok":[14000,28000],"Istanbul":[45000,82000],
+  "Kyoto":[55000,100000],"Hampi":[3000,7000],"Jim Corbett":[3000,7500],
+  "Kaziranga":[5000,10000],"Varanasi":[3500,7000],"Kolkata":[3000,6500],
+  "Jodhpur":[4000,8000],"Bhutan":[15000,28000],"Hoi An":[28000,52000],
+  "Pondicherry":[3000,6000],"Coorg":[2800,5500],"Tawang":[6000,11000],
+  "Pokhara":[12000,22000],"Meghalaya":[4500,8500],"Wayanad":[3000,6000]
+};
+const SEG_CAR={backpacker:[700,1400],comfort:[1800,3000],luxury:[4000,7500],adventure:[1100,2000],couple:[2000,3500],family:[2600,4200]};
+const SEG_FOOD={backpacker:[280,550],comfort:[550,950],luxury:[1400,3000],adventure:[320,600],couple:[900,1700],family:[1300,2400]};
+const SEG_ACT={backpacker:[250,600],comfort:[900,1600],luxury:[2200,5000],adventure:[1400,2800],couple:[1300,2500],family:[1600,3200]};
+
+function calcBudget(destName,segId,days,pax){
+  const nights=Math.max(days-1,1);
+  const fl=DEST_FLIGHTS[destName]||[5000,12000];
+  const car=SEG_CAR[segId]||SEG_CAR.comfort;
+  const food=SEG_FOOD[segId]||SEG_FOOD.comfort;
+  const act=SEG_ACT[segId]||SEG_ACT.comfort;
+  const hr=hotelRate;
+  const items=[
+    {icon:'✈️',cat:'Flights / Transport',min:fl[0],max:fl[1],note:'Per person, round trip'},
+    {icon:'🏨',cat:'Accommodation ('+hotelId+')',min:hr[0]*nights,max:hr[1]*nights,note:'₹'+hr[0].toLocaleString()+'–'+hr[1].toLocaleString()+' × '+nights+' nights'},
+    {icon:'🚗',cat:'Car rental / Cab',min:car[0]*days,max:car[1]*days,note:'₹'+car[0].toLocaleString()+'–'+car[1].toLocaleString()+' × '+days+' days'},
+    {icon:'🎟️',cat:'Activities & entry fees',min:act[0]*days,max:act[1]*days,note:'Per day estimate'},
+    {icon:'🍛',cat:'Food & drinks',min:food[0]*days,max:food[1]*days,note:'Per day per person'},
+  ];
+  const sm=items.reduce((s,i)=>s+i.min,0),sM=items.reduce((s,i)=>s+i.max,0);
+  const bm=Math.round(sm*0.1),bM=Math.round(sM*0.1);
+  items.push({icon:'🛡️',cat:'Buffer (10%)',min:bm,max:bM,note:'Contingency'});
+  return{items,tot_min:sm+bm,tot_max:sM+bM};
+}
+
+// ── INTEREST → POOL: CATEGORY + SCOPE ARE BOTH ABSOLUTE ──
+function pickPool(vibe,scope){
+  // STEP 1: Active interest tags — highest priority
+  const counts={};
+  document.querySelectorAll('.tag.on').forEach(t=>{
+    const c=t.dataset.cat;if(c)counts[c]=(counts[c]||0)+1;
+  });
+  let topCat=null,topN=0;
+  Object.entries(counts).forEach(([k,v])=>{if(v>topN){topN=v;topCat=k;}});
+
+  // STEP 2: Infer from vibe text if no tags selected
+  if(!topCat){
+    const v=vibe.toLowerCase();
+    if(v.includes('beach')||v.includes('ocean')||v.includes('sea')||v.includes('snorkel')||
+       v.includes('coral')||v.includes('swim')||v.includes('island')||v.includes('dive')||
+       v.includes('lagoon')||v.includes('coast')||v.includes('wave'))          topCat='beach';
+    else if(v.includes('mountain')||v.includes('trek')||v.includes('monastery')||
+            v.includes('snow')||v.includes('altitude')||v.includes('himalaya')||
+            v.includes('cold air')||v.includes('peak')||v.includes('glacier'))  topCat='mountain';
+    else if(v.includes('desert')||v.includes('sand')||v.includes('dune')||
+            v.includes('fort')||v.includes('regal'))                            topCat='desert';
+    else if(v.includes('chaos')||v.includes('street')||v.includes('city')||
+            v.includes('market')||v.includes('food')||v.includes('bazaar'))     topCat='city';
+    else if(v.includes('wildlife')||v.includes('safari')||v.includes('tiger'))  topCat='wildlife';
+    else if(v.includes('temple')||v.includes('culture')||v.includes('ruins')||
+            v.includes('ancient')||v.includes('history'))                       topCat='culture';
+    else                                                                         topCat='mountain';
+  }
+  if(topCat==='nature') topCat='mountain';
+
+  // Helper: apply scope filter strictly
+  function applyScope(arr){
+    if(scope==='domestic')    return arr.filter(d=>d.dom===true);
+    if(scope==='international') return arr.filter(d=>d.dom===false);
+    return arr; // 'both'
+  }
+
+  // STEP 3: Primary pool — right category AND right scope
+  let pool = applyScope((POOLS[topCat]||POOLS.mountain).slice());
+
+  // STEP 4: Short? Pull from adjacent categories — SAME SCOPE, never crosses it
+  if(pool.length<3){
+    const adj={beach:['culture','city'],mountain:['culture','desert'],
+               desert:['mountain','culture'],city:['culture','mountain'],
+               culture:['city','mountain'],wildlife:['mountain','culture']};
+    for(const ec of (adj[topCat]||[])){
+      if(pool.length>=3) break;
+      const ep=applyScope((POOLS[ec]||[]).slice());
+      ep.forEach(d=>{if(!pool.find(p=>p.name===d.name))pool.push(d);});
+    }
+  }
+
+  // STEP 5: Still short? Relax ONLY category (keep scope), then relax both as last resort
+  if(pool.length<3){
+    let allSameScope=[];
+    Object.values(POOLS).forEach(p=>allSameScope=allSameScope.concat(applyScope(p)));
+    allSameScope.forEach(d=>{if(pool.length<3&&!pool.find(p=>p.name===d.name))pool.push(d);});
+  }
+  if(pool.length<3){
+    let all=[];Object.values(POOLS).forEach(p=>all=all.concat(p));
+    all.forEach(d=>{if(pool.length<3&&!pool.find(p=>p.name===d.name))pool.push(d);});
+  }
+
+  return{pool,cat:topCat};
+}
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+// ── UI ──
+function showPg(id){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  window.scrollTo(0,0);
+  if(id==='pg-name')setBg('name');
+  else if(id==='pg-seg')setBg('seg');
+  else if(id==='pg-input')setBg('input');
+}
+function submitName(){
+  const n=document.getElementById('name-in').value.trim();
+  if(!n){document.getElementById('name-in').style.borderColor='rgba(255,80,80,.6)';return;}
+  userName=n;
+  document.getElementById('big-name').innerHTML=n+'<em> ✦</em>';
+  document.getElementById('iv-name').innerHTML='Ready, <em>'+n+'</em>';
+  document.getElementById('user-badge').textContent='Hi, '+n+'!';
+  showPg('pg-seg');
+}
+document.getElementById('name-in').addEventListener('keydown',e=>{if(e.key==='Enter')submitName();});
+function pickSeg(id,name,color,defaultGroup){
+  segId=id;segName=name;segColor=color;
+  groupSize=defaultGroup;
+  document.getElementById('gv').textContent=groupSize+(groupSize===1?' person':' people');
+  document.getElementById('seg-badge-btn').textContent=name+' ↩';
+  showPg('pg-input');
+}
+function setScope(btn){document.querySelectorAll('.sc-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');destScope=btn.dataset.s;}
+function tgl(el){el.classList.toggle('on');}
+function pickBudget(btn){
+  document.querySelectorAll('.bud-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  budgetMin=parseInt(btn.dataset.bmin);
+  budgetMax=parseInt(btn.dataset.bmax);
+}
+function pickHotel(btn){
+  document.querySelectorAll('.hb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');hotelId=btn.dataset.h;
+  const r=btn.dataset.hr.split(',');hotelRate=[parseInt(r[0]),parseInt(r[1])];
+}
+function sv(t){document.getElementById('vi').value=t;document.getElementById('vi').focus();}
+function chgG(d){groupSize=Math.max(1,Math.min(20,groupSize+d));document.getElementById('gv').textContent=groupSize+(groupSize===1?' person':' people');}
+
+// ── STARS ──
+function makeStars(id,n){
+  const c=document.getElementById(id);if(!c)return;
+  for(let i=0;i<n;i++){
+    const s=document.createElement('div');s.className='st';
+    const sz=Math.random()*2.2+0.8;
+    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*75}%;animation-duration:${Math.random()*3+2}s;animation-delay:${Math.random()*4}s`;
+    c.appendChild(s);
+  }
+}
+makeStars('stars-name',100);makeStars('stars-seg',80);makeStars('stars-load',150);
+
+// ── LOADING ──
+const PHRASES=['Reading your vibe...','Scanning destinations...','Matching mood to landscapes...','Calculating your budget...','Almost there...'];
+let pt;
+function startP(){let i=0;const el=document.getElementById('lp');el.textContent=PHRASES[0];pt=setInterval(()=>{i=(i+1)%PHRASES.length;el.textContent=PHRASES[i];},2200);}
+function stopP(){clearInterval(pt);}
+
+// ── GO ──
+async function go(){
+  const vibe=document.getElementById('vi').value.trim();
+  const errEl=document.getElementById('err');
+  if(!vibe||vibe.length<5){errEl.textContent='Please describe your vibe!';errEl.style.display='block';setTimeout(()=>errEl.style.display='none',2500);return;}
+  errEl.style.display='none';
+  const days=parseInt(document.getElementById('c-d').value);
+  const cc={vibe,days,season:document.getElementById('c-s').value,
+    transport:document.getElementById('c-t').value,mobility:document.getElementById('c-m').value,
+    groupSize,segId,segName,scope:destScope,hotelId};
+  document.getElementById('load-for').textContent=userName?'Searching for '+userName+'...':'Searching...';
+  showPg('pg-load');startP();
+  setBg('input');
+  let data;
+  try{
+    if(!API_KEY)throw new Error('no key');
+    data=await apiCall(vibe,cc);
+    if(!data||!data.destinations||!data.destinations.length)throw new Error('bad');
+  }catch(e){data=buildFallback(vibe,cc);}
+  stopP();renderResults(data,cc);showPg('pg-results');
+}
+
+async function apiCall(vibe,c){
+  const cats=[...new Set([...document.querySelectorAll('.tag.on')].map(t=>t.dataset.cat).filter(Boolean))];
+  const scope=c.scope==='domestic'?'India only':c.scope==='international'?'International only':'Mix of India and international';
+  const sys=`You are a travel expert. ${scope}. User budget: ₹${budgetMin.toLocaleString()}–₹${budgetMax.toLocaleString()} total. If interest categories: ${cats.join(',')}, ONLY show destinations matching those categories exactly. Return ONLY valid JSON: {"destinations":[{"name":"","region":"","domestic":true,"cat":"beach|mountain|desert|city|culture|wildlife|nature","tagline":"","matchScore":91,"whyItFits":"3 vivid sentences using user words","detail":"2 sentences of practical context","experiences":["e1","e2","e3","e4"],"itinerary":{"day1":{"m":"","a":"","e":"","img1":"3 word unsplash"},"day2":{"m":"","a":"","e":"","img2":"3 word unsplash"},"day3":{"m":"","a":"","e":"","img3":"3 word unsplash"}},"vibe":"w1,w2,w3","img":"5 word unsplash","stays":[{"icon":"emoji","type":"","ex":"","price":"₹X–Y/night","note":"","best":true/false}]}]} 3 diverse destinations, different from each other.`;
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1800,system:sys,
+      messages:[{role:'user',content:`Vibe:"${vibe}" Seg:${c.segName} Budget:${budgetMin}-${budgetMax} Days:${c.days} Hotel:${c.hotelId} Scope:${c.scope} Interests:${cats.join(',')||'any'} Group:${c.groupSize}`}]})
+  });
+  const j=await r.json();
+  if(!j.content)throw new Error('empty');
+  return JSON.parse(j.content.filter(b=>b.type==='text').map(b=>b.text).join('').replace(/```json|```/g,'').trim());
+}
+
+function buildFallback(vibe,cc){
+  const{pool,cat}=pickPool(vibe,cc.scope);
+  const picked=shuffle(pool).slice(0,3);
+  // Change background to match category
+  setBg(cat);
+  const scores=[Math.floor(Math.random()*7)+88,Math.floor(Math.random()*9)+79,Math.floor(Math.random()*9)+70];
+  return{cat,destinations:picked.map((d,i)=>({
+    name:d.name,region:d.region,domestic:d.dom,cat:d.cat,
+    tagline:d.tg,matchScore:scores[i],whyItFits:d.why,detail:d.detail,
+    experiences:d.exp,itinerary:d.itin,vibe:d.vibe,img:d.img,stays:d.stays
+  }))};
+}
+
+// ── RENDER ──
+function renderResults(data,cc){
+  if(data.cat)setBg(data.cat);
+  const greet=userName?`<em>${userName}</em>, here are your 3 matches`:'Here are your 3 matches';
+  document.getElementById('res-greet').innerHTML=greet;
+  document.getElementById('res-vibe').textContent='"'+cc.vibe+'"';
+  const chips=[cc.days+' days',cc.season,cc.segName,hotelId,'👥 '+cc.groupSize,
+    '💰 ₹'+budgetMin.toLocaleString()+'–₹'+budgetMax.toLocaleString(),
+    cc.scope==='both'?'🌍 India+World':cc.scope==='domestic'?'🇮🇳 India':'✈️ International'];
+  document.getElementById('res-meta').innerHTML=chips.map(c=>'<span class="mc">'+c+'</span>').join('');
+  const list=document.getElementById('dest-list');list.innerHTML='';
+  const COLS=['#2C5F4A','#B5601A','#8B3A62'];
+  data.destinations.forEach(function(dest,i){
+    const bud=calcBudget(dest.name,cc.segId,cc.days,cc.groupSize);
+    const cid='ci-'+i;
+    origItins[cid]=JSON.parse(JSON.stringify(dest.itinerary));
+    const col=COLS[i];
+    const item=document.createElement('div');item.className='dcard';
+    const dom=dest.domestic===false?'International ✈':'🇮🇳 India';
+
+    // Budget cards
+    const bcards=bud.items.map(it=>`<div class="bdc"><div class="bdc-icon">${it.icon}</div><div class="bdc-label">${it.cat}</div><div class="bdc-val">₹${it.min.toLocaleString()}–₹${it.max.toLocaleString()}</div><div class="bdc-note">${it.note}</div></div>`).join('');
+    const totPax=cc.groupSize>1?`<div class="bud-total" style="margin-top:6px"><div class="bt-lbl">Per person</div><div class="bt-val" style="font-size:14px">₹${bud.tot_min.toLocaleString()}–₹${bud.tot_max.toLocaleString()}</div></div>`:'';
+
+    // Itinerary overview table
+    const itin=dest.itinerary;
+    const ovRows=[
+      `<tr><td class="day-cell">Day 1</td><td class="loc-cell">${dest.name}</td><td class="act-cell">${itin.day1.m}; ${itin.day1.a}</td></tr>`,
+      `<tr><td class="day-cell">Day 2</td><td class="loc-cell">${dest.name}</td><td class="act-cell">${itin.day2.m}; ${itin.day2.a}</td></tr>`,
+      `<tr><td class="day-cell">Day 3</td><td class="loc-cell">${dest.name}</td><td class="act-cell">${itin.day3.m}; ${itin.day3.a}</td></tr>`,
+    ].join('');
+
+    // Day cards
+    function dayCard(d,di,imgKey){
+      const dayData=itin[d];
+      const imgSearch=(dayData[imgKey]||dest.img).replace(/\s+/g,'+');
+      const imgId='dimg-'+i+'-'+di;
+      return`<div class="idc"><div class="idc-img" id="${imgId}" style="background-image:url('https://source.unsplash.com/featured/600x240/?${imgSearch}'),linear-gradient(135deg,#1a3829,#2d5a4a)"><div class="idc-img-overlay"></div><div class="idc-day-lbl">Day ${di+1}</div></div><div class="idc-body"><div class="idc-slot"><div class="idc-time">Morning</div><div class="idc-act" id="${cid}-${d}-m" contenteditable="false">${dayData.m}</div></div><div class="idc-slot"><div class="idc-time">Afternoon</div><div class="idc-act" id="${cid}-${d}-a" contenteditable="false">${dayData.a}</div></div><div class="idc-slot"><div class="idc-time">Evening</div><div class="idc-act" id="${cid}-${d}-e" contenteditable="false">${dayData.e}</div></div><button class="add-slot-btn" onclick="addSlot('${cid}','${d}',this)">＋ Add activity</button><textarea class="day-note" placeholder="Notes for Day ${di+1}..." rows="1"></textarea></div></div>`;
+    }
+
+    // Stay options
+    const stays=(dest.stays||[]).map(s=>`<div class="stay-card">${s.best?'<div class="stay-best">Recommended</div>':''}<div class="stay-icon">${s.icon}</div><div class="stay-type">${s.type}</div><div class="stay-ex">${s.ex}</div><div class="stay-price">${s.price}</div><div class="stay-note">${s.note}</div></div>`).join('');
+
+    item.innerHTML=
+      `<div class="dc-hero">
+        <div class="dc-hero-bg" id="hbg-${i}"></div>
+        <div class="dc-hero-grad"></div>
+        <div class="dc-hero-text">
+          <div class="rank-lbl">#${i+1} Match</div>
+          <div class="dc-name">${dest.name}</div>
+          <div class="dc-region">${dest.region} <span class="flag-badge">${dom}</span></div>
+        </div>
+        <div class="match-float">
+          <div class="mf-pct" style="color:${col}">${dest.matchScore}%</div>
+          <div class="mf-word">match</div>
+          <div class="mf-bar-bg"><div class="mf-bar" id="mfb-${i}" style="background:${col}"></div></div>
+        </div>
+      </div>
+      <div class="dc-body">
+        <div class="dc-tagline">${dest.tagline}</div>
+        <div class="dc-why">${dest.whyItFits}</div>
+        <div class="dc-detail">${dest.detail||''}</div>
+        <div class="exp-wrap">${dest.experiences.map(e=>`<span class="exp-tag">${e}</span>`).join('')}</div>
+        <div class="dc-vibe">${dest.vibe}</div>
+      </div>
+      <div class="sec-head">🗺️ Trip overview — ${userName?userName+' · ':''} ${cc.days} days · ${dest.name}</div>
+      <div class="ov-table-wrap"><table class="ov-table"><thead><tr><th>Day</th><th>Location</th><th>Activities</th></tr></thead><tbody>${ovRows}</tbody></table></div>
+      <div class="sec-head">🗓️ Day-by-day itinerary</div>
+      <div class="itin-grid-wrap">
+        <div class="itin-tools">
+          <button class="itin-tb" id="etb-${i}" onclick="toggleEdit(${i},'${cid}')">✏️ Edit itinerary</button>
+          <button class="itin-tb" onclick="resetItin(${i},'${cid}')">↺ Reset</button>
+        </div>
+        <div class="itin-days-grid">${['day1','day2','day3'].map((d,di)=>dayCard(d,di,di===0?'img1':di===1?'img2':'img3')).join('')}</div>
+      </div>
+      <div class="sec-head">🏡 Where to stay in ${dest.name}</div>
+      <div class="stay-wrap"><div class="stay-grid">${stays}</div></div>
+      <div class="sec-head" style="margin-top:0">💰 Budget breakdown · ${cc.days} days · ${cc.groupSize} ${cc.groupSize===1?'person':'people'} · ₹${budgetMin.toLocaleString()}–₹${budgetMax.toLocaleString()} budget</div>
+      <div class="bud-wrap">
+        <div class="bud-cards-grid">${bcards}</div>
+        <div class="bud-total"><div class="bt-lbl">Total ${cc.groupSize===1?'per person':'for '+cc.groupSize+' people'}</div><div class="bt-val">₹${(cc.groupSize===1?bud.tot_min:bud.tot_min*cc.groupSize).toLocaleString()} – ₹${(cc.groupSize===1?bud.tot_max:bud.tot_max*cc.groupSize).toLocaleString()}</div></div>
+        ${totPax}
+        <div class="bud-note">Destination-specific estimates for ${dest.name} · ${cc.segName} · ±20% variance</div>
+      </div>`;
+
+    list.appendChild(item);
+    setTimeout(()=>{
+      item.classList.add('in');
+      const mf=document.getElementById('mfb-'+i);
+      if(mf)setTimeout(()=>mf.style.width=dest.matchScore+'%',400);
+    },120+i*200);
+
+    // Hero image
+    const imgQ=(dest.img||dest.name).replace(/\s+/g,'+');
+    const hbg=document.getElementById('hbg-'+i);
+    const heroImg=new Image();
+    heroImg.onload=()=>hbg.style.backgroundImage=`url('${heroImg.src}')`;
+    heroImg.src='https://source.unsplash.com/featured/1000x420/?'+imgQ;
+  });
+}
+
+// ── EDIT ──
+function toggleEdit(i,cid){
+  const btn=document.getElementById('etb-'+i);const on=btn.classList.contains('on');
+  document.querySelectorAll(`[id^="${cid}-"]`).forEach(el=>el.contentEditable=on?'false':'true');
+  btn.classList.toggle('on');btn.textContent=on?'✏️ Edit itinerary':'✓ Done editing';
+}
+function resetItin(i,cid){
+  const d=origItins[cid];if(!d)return;
+  ['day1','day2','day3'].forEach(day=>['m','a','e'].forEach(s=>{
+    const el=document.getElementById(`${cid}-${day}-${s}`);
+    if(el){el.textContent=d[day][s];el.contentEditable='false';}
+  }));
+  const btn=document.getElementById('etb-'+i);
+  if(btn){btn.classList.remove('on');btn.textContent='✏️ Edit itinerary';}
+}
+function addSlot(cid,day,btn){
+  const dc=btn.parentElement;
+  const ns=document.createElement('div');ns.className='idc-slot';
+  const uid=cid+'-'+day+'-c-'+Date.now();
+  ns.innerHTML=`<div class="idc-time" contenteditable="true" style="outline:none;border:1px dashed var(--line);border-radius:3px;padding:1px 4px;min-width:60px">Time</div><div class="idc-act" id="${uid}" contenteditable="true" style="background:rgba(44,95,74,.07);border:1px dashed rgba(44,95,74,.3);padding:2px 5px;border-radius:4px">Your activity here...</div><button style="background:none;border:none;cursor:pointer;color:var(--faint);font-size:12px;padding:0 4px;flex-shrink:0" onclick="this.parentElement.remove()">✕</button>`;
+  dc.insertBefore(ns,btn);document.getElementById(uid).focus();
+}
+
+// Init background
+setBg('name');
+</script>
+</body>
+</html>
